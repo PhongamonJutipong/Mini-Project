@@ -40,6 +40,6 @@
             </tbody>
         </table> 
         <br>
-        <a class="m_button2" href='.php'><button> Home </button></a>
+        <a class="m_button2" href='AdminMainmenu.php'><button> Home </button></a>
     </body>
 </html>
