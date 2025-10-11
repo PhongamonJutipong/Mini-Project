@@ -2,41 +2,43 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page</title>
-    <link rel="stylesheet" href="StyleMain.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Page</title>
+  <link rel="stylesheet" href="StyleMain.css" />
 </head>
 
 <body>
   <div class="page">
-    <header>
+    <header class="site-header">
       <div class="topnav">
-        <h1 style="color: red;">Pixora</h1>
+        <a href="index.html" class="brand" aria-label="Pixora Home">
+          <h1>Pixora</h1>
+        </a>
 
         <div class="search-container">
-          <form class="search-box" action="/action_page.php">
-            <input type="text" class="search-input" placeholder="Search.." name="search">
+          <form class="search-box" action="/action_page.php" role="search" aria-label="Site search">
+            <input type="text" class="search-input" placeholder="Search..." name="q" aria-label="Search" />
             <button type="submit" class="search-btn">Search</button>
           </form>
         </div>
 
-        <div class="top-actions">
-          <img src="IMG_logo.jpg" alt="">
-          <img src="IMG_logo.jpg" alt="">
-          <img src="user.png" alt="">
+        <div class="top-actions" aria-label="User actions">
+          <img src="IMG_logo.jpg" alt="Notifications" loading="lazy" />
+          <img src="IMG_logo.jpg" alt="Settings" loading="lazy" />
+          <img src="user.png" alt="User profile" loading="lazy" />
         </div>
       </div>
     </header>
 
     <main class="layout">
-      <aside class="sidebar">
+      <aside class="sidebar" aria-label="Categories">
         <ul>
-          <li>Art & Design</li>
-          <li>Health & Fitness</li>
-          <li>Technology & Business</li>
-          <li>Travel & Adventure</li>
-          <li>Food & Drink</li>
+          <li><a href="#">Art & Design</a></li>
+          <li><a href="#">Health & Fitness</a></li>
+          <li><a href="#">Technology & Business</a></li>
+          <li><a href="#">Travel & Adventure</a></li>
+          <li><a href="#">Food & Drink</a></li>
         </ul>
       </aside>
 
@@ -44,30 +46,31 @@
         <section class="block">
           <h2>Popular Today</h2>
           <div class="card-grid">
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 1" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 2" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 3" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 4" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 5" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 6" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Popular image 7" /></article>
           </div>
         </section>
 
         <section class="block">
           <h2>Random Picture</h2>
           <div class="card-grid">
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
-            <article class="card"><img src="IMG_logo.jpg" alt=""></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 1" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 2" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 3" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 4" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 5" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 6" /></article>
+            <article class="card"><img src="IMG_logo.jpg" alt="Random image 7" /></article>
           </div>
         </section>
       </section>
     </main>
   </div>
 </body>
+
 </html>
