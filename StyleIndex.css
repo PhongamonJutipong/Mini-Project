@@ -43,7 +43,6 @@ body {
     margin-top: 200px;
     margin-left: 100px;
     font-weight: bold;
-    font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
 .text-ads h1,span{
@@ -104,6 +103,7 @@ body {
 .page-2 {
     width: 100%;
     height: 100vh;
+
 }
 
 footer {
@@ -172,7 +172,7 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* ครอบเต็มจอโดยไม่บีบสัดส่วน */
-  z-index: -1;           /* ไปอยู่ข้างหลังเนื้อหา */
-  filter: brightness(60%); /* ลดความสว่างเพื่อให้อ่านข้อความชัดขึ้น */
+  object-fit: cover;    
+  z-index: -1;          
+  filter: brightness(60%);
 }
