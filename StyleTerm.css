@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+ul li {
+    margin-bottom: 10px;
+}
+h1, h2, h3 {
+    color: #D22B2B;
+    margin-bottom: 20px;
+}
+p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+a {
+    color: #D22B2B;
+    text-decoration: none;
+}
