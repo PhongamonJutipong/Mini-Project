@@ -57,3 +57,13 @@ button[type="submit"] {
     
 }
 
+.navbar_register {
+    background-color: #D22B2B;
+    color: white;
+    padding: 10px 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}   
+
