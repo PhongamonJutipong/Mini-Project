@@ -6,11 +6,12 @@
     <link rel="stylesheet" href="StyleRegister.css">
 </head>
 <body>
+    <div class="register-container">
     <h2>สมัครสมาชิก</h2>
     <form action="register_success" method="post">
        
         <label for="username">ชื่อผู้ใช้:</label>
-        <input type="text" id"username" name="username" required><br><br>
+        <input type="text" id="username" name="username" required><br><br>
 
         <label for="email">อีเมล:</label>
         <input type="email" id="email" name="email" required><br><br>
@@ -25,13 +26,16 @@
         <input type="password" id="confirm_password" name="confirm_password" required><br><br>
 
         <button type="submit">สมัครสมาชิก</button>
-
-        <button type="button" onclick="window.location.href='/'">ยกเลิก</button>
         <br><br>
 
         <p>โดยการสมัครสมาชิก, คุณยอมรับ <a href="terms.html">ข้อกำหนดและเงื่อนไข</a> และ <a href="privacy.html">นโยบายความเป็นส่วนตัว</a> ของเรา</p>
 
 
     </form>
+    <br><br>
+    <hr>
+    <hr>
+    <a href="Login.html">หากมีบัญชีแล้ว</a>
+    </div>
 </body>
 </html>
