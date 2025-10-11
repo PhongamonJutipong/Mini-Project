@@ -1,17 +1,18 @@
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-    color: #333;
+    font-family: Arial, sans-serif;
 }
 .profile-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* allow profile content to grow so footer can be pushed to the bottom */
+    flex: 1;
 }
 ul {
     list-style-type: none;
@@ -47,7 +48,7 @@ input[type="text"], input[type="email"], input[type="password"] ,input[type="tel
 .form{
     display: flex;
     flex-direction: column;
-    max-width: 400px;
+    max-width: 700px;
     margin: auto;
     padding: 20px;
     background: #fff;
@@ -93,10 +94,24 @@ button {
     font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 h2 {
-    margin-left: 380px;
+    margin-left: 600px;
     font-family: Roboto, Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 30px;
     color: #000000;
     margin-bottom: 20px;
+}
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    margin-top: auto;
+    padding: 16px;
+}
+
+/* Make the page a column flex container so footer with margin-top:auto sits at the bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
