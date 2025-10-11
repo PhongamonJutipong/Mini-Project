@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkEmail = $conn->query("SELECT email FROM users WHERE email = '$email'");
     if ($checkEmail->num_rows > 0) {
         $_SESSION['error'] = "Email already exists. Please use a different email.";
-        $_SESSION['active_form'] = 'register';
     } else {
         $conn->query("INSERT INTO users (username, email, phone, password, role) VALUES ('$name', '$email', '$phone', '$password', '$role')");
     }
