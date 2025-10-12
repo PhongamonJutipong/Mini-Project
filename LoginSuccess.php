@@ -19,7 +19,7 @@
         if($result->num_rows >0){
             $user = $result -> fetch_assoc();
 
-            if($user && password_verify($password, $user['password_hash'])){           
+            if($user && password_verify($password, $user['password'])){           
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['display_name'] = $user['display_name'];
                 header("Location: main.html");
