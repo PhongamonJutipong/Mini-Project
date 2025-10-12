@@ -1,3 +1,39 @@
+<?php
+// ----- Boot -----
+session_start();
+require __DIR__ . '/conn.php'; // $conn = new mysqli(...)
+
+// ----- Load profile picture -----
+$pic = $_SESSION['user_picture'] ?? null;
+
+// ถ้า session ยังไม่มีรูป แต่มี user_id ให้ดึงจาก DB
+if (!$pic && !empty($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT user_picture FROM user WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $stmt->bind_result($pic);
+    $stmt->fetch();
+    $stmt->close();
+    if ($pic) $_SESSION['user_picture'] = $pic; // cache
+}
+
+// ----- Build image src safely -----
+$baseUrl    = '../uploads/profile/';                     // URL base สำหรับรูปโปรไฟล์
+$baseFs     = realpath(__DIR__ . '/../uploads/profile'); // path จริงในระบบไฟล์
+$defaultUrl = '../assets/default-avatar.png';
+
+if ($pic) {
+    if (preg_match('~^(https?://|/)~', $pic)) {
+        $picSrc = $pic; // เป็น URL เต็มอยู่แล้ว
+    } else {
+        $safeFile = basename($pic); // กัน path traversal
+        $fsPath   = $baseFs ? $baseFs . DIRECTORY_SEPARATOR . $safeFile : null;
+        $picSrc   = (is_file($fsPath)) ? $baseUrl . rawurlencode($safeFile) : $defaultUrl;
+    }
+} else {
+    $picSrc = $defaultUrl;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,11 +45,6 @@
 </head>
 
 <body>
-
-  <?php if (!empty($_SESSION['user_picture'])): ?>
-    <img src="<?php echo htmlspecialchars($_SESSION['user_picture']); ?>" alt="Profile" width="100">
-  <?php endif; ?>
-
   <div class="page">
     <header class="site-header">
       <div class="topnav">
@@ -29,9 +60,9 @@
         </div>
 
         <div class="top-actions" aria-label="User actions">
-          <img src="../picture and video/shopping-cart.png" alt="Shipping">
-          <img src="../picture and video/favorite.png" alt="favorites">
-          <img src="<?php echo $picSrc; ?>" alt="Profile" width="100" height="100" style="border-radius:50%;object-fit:cover">
+          <img src="../picture%20and%20video/shopping-cart.png" alt="Shopping cart">
+          <img src="../picture%20and%20video/favorite.png" alt="Favorites">
+          <img src="<?= htmlspecialchars($picSrc, ENT_QUOTES) ?>" alt="Profile" width="100" height="100" style="border-radius:50%;object-fit:cover">
         </div>
       </div>
     </header>
