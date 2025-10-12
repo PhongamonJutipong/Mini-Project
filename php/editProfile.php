@@ -1,5 +1,5 @@
 <?php
-session_start(); // ✅ เรียกใช้ session ก่อน
+session_start(); // 
 $db = mysqli_connect("localhost", "root", "", "picture_store");
 
 if (!$db) {
