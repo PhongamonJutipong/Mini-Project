@@ -29,8 +29,8 @@
         </div>
 
         <div class="top-actions" aria-label="User actions">
-          <img src="shopping-cart.png" alt="Shipping">
-          <img src="favorite.png" alt="favorites">
+          <img src="../picture and video/shopping-cart.png" alt="Shipping">
+          <img src="../picture and video/favorite.png" alt="favorites">
           <img src="<?php echo $picSrc; ?>" alt="Profile" width="100" height="100" style="border-radius:50%;object-fit:cover">
         </div>
       </div>
