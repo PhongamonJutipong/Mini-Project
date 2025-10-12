@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="Style_Privacy.css">
+    <link rel="stylesheet" href="..//css/Style_Privacy.css">
     <title>Privacy Policy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>

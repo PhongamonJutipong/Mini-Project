@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>สมัครสมาชิก</title>
-    <link rel="stylesheet" href="StyleRegister.css">
+    <link rel="stylesheet" href="..//css//StyleRegister.css">
 
     <script>
         function validateForm(event) {

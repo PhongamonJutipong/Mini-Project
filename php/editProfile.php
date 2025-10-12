@@ -52,7 +52,7 @@ $user = mysqli_fetch_assoc($result);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="Style_Profile.css">
+    <link rel="stylesheet" href="../css/Style_Profile.css">
     <title>Profile</title>
 </head>
 <body>

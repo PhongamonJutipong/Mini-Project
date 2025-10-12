@@ -5,7 +5,7 @@
 <title>Image Gallery</title>
 </head>
 
-<link rel="stylesheet" href="StyleUsergallery.css">
+<link rel="stylesheet" href="../css/StyleUsergallery.css">
 <body>
     <?php
         require 'conn.php'; 

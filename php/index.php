@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-    <link rel="stylesheet" href="StyleIndex.css">
+    <link rel="stylesheet" href="../css/StyleIndex.css">
 </head>
 
 <body>
@@ -27,7 +27,7 @@
         </header>
 
         <video autoplay muted loop playsinline class="video-bg">
-            <source src="video3.mp4" type="video/mp4">
+            <source src="../picture and video/video3.mp4" type="video/mp4">
         </video>
 
         <div class="video-back">

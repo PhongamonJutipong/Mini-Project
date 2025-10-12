@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Control · Pixora</title>
-    <link rel="stylesheet" href="StyleMainaddmin.css" />
+    <link rel="stylesheet" href="../css/StyleMainaddmin.css">
 </head>
 
 <body>
