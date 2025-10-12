@@ -1,3 +1,6 @@
+editProfile
+
+
 <?php
 $db = mysqli_connect("localhost", "root", "", "picture_store");
 
@@ -79,3 +82,4 @@ $user = mysqli_fetch_assoc($result);
     </div>
 </body>
 </html>
+
