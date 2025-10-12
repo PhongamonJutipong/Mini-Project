@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <title>สมัครสมาชิก</title>
@@ -12,7 +13,7 @@
             const checkbox = document.getElementById("terms_checkbox");
             if (password !== confirmPassword) {
                 alert("Passwords do not match. Please try again.");
-                event.preventDefault(); 
+                event.preventDefault();
                 return false;
             }
             if (!checkbox.checked) {
@@ -25,12 +26,12 @@
         }
     </script>
 </head>
+
 <body>
     <div class="register-container">
         <h2>Register</h2>
-        <form action="registerSuccess.php" method="post" onsubmit="return validateForm(event)">
-
-            <label for="username">Username:</label>
+        <form action="registerSuccess.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm(event)">
+            <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required><br><br>
 
             <label for="email">Email:</label>
@@ -47,7 +48,7 @@
 
             <label>
                 <input type="checkbox" id="terms_checkbox">
-                Accept <a href="terms.html" target="_blank">Terms and Conditions</a> and 
+                Accept <a href="terms.html" target="_blank">Terms and Conditions</a> and
                 <a href="privacy.html" target="_blank">Privacy Policy</a>
             </label>
             <br><br>
@@ -61,4 +62,5 @@
         <a href="Login.html">If you already have an account, click here</a>
     </div>
 </body>
+
 </html>
