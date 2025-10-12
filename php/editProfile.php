@@ -1,26 +1,32 @@
-editProfile
-
-
 <?php
+session_start(); // ✅ เรียกใช้ session ก่อน
 $db = mysqli_connect("localhost", "root", "", "picture_store");
 
 if (!$db) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-$user_id = 1; // สมมติเป็น user ที่ล็อกอินอยู่
+// ✅ ตรวจสอบว่ามีคนล็อกอินไหม
+if (!isset($_SESSION['user_id'])) {
+    die("กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูล");
+}
+
+$user_id = $_SESSION['user_id']; // ✅ ดึง user_id จาก session
 
 if (isset($_POST['edit_profile'])) {
     $user_name = $_POST['user_name'];
     $user_email = $_POST['user_email'];
     $user_tel = $_POST['user_tel'];
 
+    // path ถูกต้องแน่ (กรณีอยู่ใน php/)
+    $targetDir = "../image_user/";
+    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
     $filename = $_FILES['user_picture']['name'];
     $tempname = $_FILES['user_picture']['tmp_name'];
-    $folder = "image_user/" . basename($filename);
+    $folder = $targetDir . basename($filename);
 
-    // อัปโหลดไฟล์
-    if (move_uploaded_file($tempname, $folder)) {
+    if (!empty($filename) && move_uploaded_file($tempname, $folder)) {
         $sql = "UPDATE user 
                 SET user_name='$user_name',
                     user_email='$user_email',
@@ -28,7 +34,6 @@ if (isset($_POST['edit_profile'])) {
                     user_picture='$filename'
                 WHERE user_id=$user_id";
     } else {
-        // ถ้าไม่อัปโหลดรูปใหม่ จะไม่เปลี่ยนรูปในฐานข้อมูล
         $sql = "UPDATE user 
                 SET user_name='$user_name',
                     user_email='$user_email',
@@ -43,13 +48,13 @@ if (isset($_POST['edit_profile'])) {
     }
 }
 
-// ดึงข้อมูลผู้ใช้มาแสดง
 $result = mysqli_query($db, "SELECT * FROM user WHERE user_id=$user_id");
 if (!$result) {
     die("Query failed: " . mysqli_error($db));
 }
 $user = mysqli_fetch_assoc($result);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
