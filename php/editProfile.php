@@ -68,7 +68,7 @@ $user = mysqli_fetch_assoc($result);
     <div class="profile-container">
         <h3>Edit Profile</h3>
         <form action="" method="post" enctype="multipart/form-data">
-            <img src="<?php echo 'image_user/' . $user['user_picture']; ?>" alt="Profile Picture" class="dp"><br><br>
+            <img src="<?php echo '../image_user/' . $user['user_picture']; ?>" alt="Profile Picture" class="dp"><br><br>
 
             <label for="user_picture">Profile Image:</label>
             <input type="file" id="user_picture" name="user_picture"><br><br>
