@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="StyleProfile.css">
+    <link rel="stylesheet" href="Style_Profile.css">
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -30,6 +30,9 @@
         <div class="profile-container">
         <h3>Edit Profile</h3>
         <form action="edit_profile_success" method="post">
+            <img src="user.png" alt="Profile Picture" class="profile-pic">
+            <br><br>           
+           
             <label for="image">Image:</label>
             <input type="file" id="image" name="image" required><br><br>
 
