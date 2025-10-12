@@ -1,6 +1,8 @@
-/* ============ Base ============ */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
 :root {
@@ -10,7 +12,6 @@
     --muted: #6b7280;
     --primary: #111;
     --accent: #e11d48;
-    /* แดงโทน Pixora */
     --line: #eceff5;
     --radius: 18px;
     --shadow: 0 8px 24px rgba(0, 0, 0, .06);
@@ -28,7 +29,11 @@ body {
     color: var(--text);
 }
 
-/* ============ Header ============ */
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
 .site-header {
     position: sticky;
     top: 0;
@@ -76,7 +81,6 @@ body {
     font-size: .85rem;
 }
 
-/* ============ Layout ============ */
 .container {
     max-width: 1200px;
     margin: 24px auto;
@@ -97,7 +101,6 @@ body {
     }
 }
 
-/* ============ Card & Sections ============ */
 .card {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -119,7 +122,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* ============ Forms ============ */
 .row {
     display: flex;
     gap: 12px;
@@ -207,7 +209,6 @@ body {
     border: 1px solid var(--line);
 }
 
-/* Status pill */
 .status {
     display: inline-block;
     padding: 6px 10px;
@@ -238,7 +239,6 @@ body {
     color: #b91c1c;
 }
 
-/* ============ Posts (read-only) ============ */
 .posts {
     display: grid;
     gap: 12px;
@@ -282,7 +282,6 @@ body {
     font-size: .95rem;
 }
 
-/* ============ Utilities ============ */
 code {
     background: #f3f4f6;
     padding: 2px 6px;
