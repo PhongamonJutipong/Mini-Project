@@ -15,12 +15,12 @@
                 <div class="navbar">
                     <h1 style="color: red;">Pixora</h1>
                     <div class="nav-3">
-                        <a href="index.html">Home</a>
+                        <a href="index.php">Home</a>
                         <a href="#page-2">Step</a>  
                     </div>
                     <div class="nav-2">
-                        <a href="register.html">Register</a>
-                        <a href="Login.html">Login</a>
+                        <a href="register.php">Register</a>
+                        <a href="Login.php">Login</a>
                     </div>
                 </div>
             </nav>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="btn-getstart">
-                <button><a href="Login.html">Get Start</a></button>
+                <button><a href="Login.php">Get Start</a></button>
             </div>
         </div>
     </section>

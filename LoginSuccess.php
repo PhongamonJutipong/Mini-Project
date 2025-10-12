@@ -1,38 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Success</title>
-</head>
-<body>
-
 <?php
-    session_start();
-    require 'conn.php';
+session_start();
+require 'conn.php';
 
-    if (isset($_POST['login'])) {
-        $email = trim($_POST['email']);
-        $password = $_POST['password'];
+if (isset($_POST['login'])) {
+    $email = trim($_POST['username']);
+    $password = $_POST['password'];
 
-        $result = $conn->query("SELECT * FROM users WHERE email = '$email'");
-        if($result->num_rows >0){
-            $user = $result -> fetch_assoc();
+    $sql = "SELECT * FROM user WHERE user_email = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-            if($user && password_verify($password, $user['password_hash'])){           
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['display_name'] = $user['display_name'];
-                header("Location: main.html");
-                exit();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+      
+        if (password_verify($password, $user['user_password'])) {
 
-            } 
-        }
-
-        $_SESSION['login_error'] = 'Incorrect email or password';
-                header("location:Login.php");
-                exit();
-    }
-?>
     
-</body>
-</html>
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_name'] = $user['user_name'];
+            $_SESSION['user_email'] = $user['user_email'];
+            $_SESSION['user_picture'] = $user['user_picture'];
+            header("Location: main.php");
+            exit();
+        } 
+
+        elseif ($password === $user['user_password']) {
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_name'] = $user['user_name'];
+            $_SESSION['user_email'] = $user['user_email'];
+            $_SESSION['user_picture'] = $user['user_picture'];
+
+            header("Location: main.php");
+            exit();
+        } 
+        else {
+            $_SESSION['login_error'] = "รหัสผ่านไม่ถูกต้อง";
+            header("Location: Login.php");
+            exit();
+        }
+    } else {
+        $_SESSION['login_error'] = "ไม่พบบัญชีผู้ใช้";
+        header("Location: Login.php");
+        exit();
+    }
+}
+?>

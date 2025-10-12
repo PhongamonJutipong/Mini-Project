@@ -9,6 +9,11 @@
 </head>
 
 <body>
+
+  <?php if (!empty($_SESSION['user_picture'])): ?>
+    <img src="<?php echo htmlspecialchars($_SESSION['user_picture']); ?>" alt="Profile" width="100">
+  <?php endif; ?>
+
   <div class="page">
     <header class="site-header">
       <div class="topnav">
@@ -24,9 +29,9 @@
         </div>
 
         <div class="top-actions" aria-label="User actions">
-          <img src="IMG_logo.jpg" alt="Notifications" loading="lazy" />
-          <img src="IMG_logo.jpg" alt="Settings" loading="lazy" />
-          <img src="user.png" alt="User profile" loading="lazy" />
+          <img src="shopping-cart.png" alt="Shipping">
+          <img src="favorite.png" alt="favorites">
+          <img src="<?php echo $picSrc; ?>" alt="Profile" width="100" height="100" style="border-radius:50%;object-fit:cover">
         </div>
       </div>
     </header>
