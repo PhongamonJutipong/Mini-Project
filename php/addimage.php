@@ -31,15 +31,27 @@ if (isset($_POST['upload'])) {
     $targetFile = $targetDir . $filename;
 
     if (move_uploaded_file($tempname, $targetFile)) {
-       $sql = "SELECT u.user_id, p.product_id, p.product_path
-        FROM user_product AS up
-        JOIN product AS p ON up.up_idproduct = p.product_id
-        JOIN user AS u ON up.up_iduser = u.user_id";
-        if (mysqli_query($mysqli, $sql)) {
-            echo "<script>alert('✅ Uploaded successfully!');</script>";
+
+        // INSERT ลง product
+        $sql_insert_product = "INSERT INTO product (creator_id, categories_name, product_name, product_description, product_path, product_price)
+                               VALUES ('$user_id', '$category', '$title', '$description', '$filename', '$price')";
+
+        if (mysqli_query($mysqli, $sql_insert_product)) {
+            $product_id = mysqli_insert_id($mysqli); // id ของ product ที่เพิ่ง insert
+
+            // INSERT ลง user_product
+            $sql_user_product = "INSERT INTO user_product (up_iduser, up_idproduct) 
+                                 VALUES ('$user_id', '$product_id')";
+            if (mysqli_query($mysqli, $sql_user_product)) {
+                echo "<script>alert('✅ Uploaded successfully!');</script>";
+            } else {
+                echo "<script>alert('❌ Failed to link user and product: " . mysqli_error($mysqli) . "');</script>";
+            }
+
         } else {
-            echo "<script>alert('❌ Database Error: " . mysqli_error($mysqli) . "');</script>";
+            echo "<script>alert('❌ Failed to insert product: " . mysqli_error($mysqli) . "');</script>";
         }
+
     } else {
         echo "<script>alert('❌ Upload Failed');</script>";
     }
