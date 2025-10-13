@@ -39,7 +39,7 @@
             </div>
 
             <div class="btn-getstart">
-                <button><a href="Login.php">Get Start</a></button>
+                <a href="Login.php"><button>Get Start</button></a>
             </div>
         </div>
     </section>
