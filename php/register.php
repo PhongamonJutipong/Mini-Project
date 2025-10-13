@@ -48,8 +48,8 @@
 
             <label>
                 <input type="checkbox" id="terms_checkbox">
-                Accept <a href="terms.html" target="_blank">Terms and Conditions</a> and
-                <a href="privacy.html" target="_blank">Privacy Policy</a>
+                Accept <a href="term.php" target="_blank">Terms and Conditions</a> and
+                <a href="privacy.php" target="_blank">Privacy Policy</a>
             </label>
             <br><br>
 
@@ -59,7 +59,7 @@
 
         <br><br>
         <hr>
-        <a href="Login.html">If you already have an account, click here</a>
+        <a href="Login.php">If you already have an account, click here</a>
     </div>
 </body>
 
