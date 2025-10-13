@@ -157,7 +157,7 @@ $resultRnd = $stmtRnd->get_result();
               </article>
             <?php endwhile; ?>
           <?php else: ?>
-            <p>No products yet.</p>
+            <p>No products </p>
           <?php endif; ?>
         </div>
       </section>
