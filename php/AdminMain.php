@@ -124,7 +124,7 @@
 
                 <p class="note">
                     เมื่อเชื่อมต่อ Backend:
-                    • <code>GET /api/users/:uid/posts</code> → สร้างรายการการ์ดโพสต์ตามข้อมูลจริง
+                     <code>GET /api/users/:uid/posts</code> → สร้างรายการการ์ดโพสต์ตามข้อมูลจริง
                 </p>
             </div>
         </section>
