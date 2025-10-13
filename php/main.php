@@ -2,24 +2,18 @@
 session_start();
 require __DIR__ . '/conn.php';
 
-/* ----------------------------------------------------
-   1) คำนวณฐานโปรเจกต์ (ทั้ง URL และ Filesystem)
----------------------------------------------------- */
+/* ------------ 1) Base paths ------------ */
 $projectFsBase  = dirname(__DIR__);
 $projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-
-$imageDirFs   = $projectFsBase . '/image_user';
-$imageDirUrl  = $projectUrlBase . '/image_user/';
+$imageDirFs    = $projectFsBase . '/image_user';
+$imageDirUrl   = $projectUrlBase . '/image_user/';
 $productDirUrl = $projectUrlBase . '/image_product/';
-$iconDirUrl   = $projectUrlBase . '/picture_and_video/';
-$defaultUrl   = $projectUrlBase . '/assets/default-avatar.png';
+$iconDirUrl    = $projectUrlBase . '/picture_and_video/';
+$defaultUrl    = $projectUrlBase . '/assets/default-avatar.png';
 
-/* ----------------------------------------------------
-   2) โหลดชื่อไฟล์รูปโปรไฟล์จาก session/DB
----------------------------------------------------- */
+/* ------------ 2) Profile picture ------------ */
 $pic = $_SESSION['user_picture'] ?? null;
-
 if (!$pic && !empty($_SESSION['user_id'])) {
   $stmt = $mysqli->prepare("SELECT user_picture FROM user WHERE user_id = ?");
   $stmt->bind_param("i", $_SESSION['user_id']);
@@ -29,141 +23,208 @@ if (!$pic && !empty($_SESSION['user_id'])) {
   $stmt->close();
   if ($pic) $_SESSION['user_picture'] = $pic;
 }
+$picSrc = (!empty($pic) && is_file($imageDirFs . '/' . basename($pic)))
+  ? $imageDirUrl . rawurlencode(basename($pic))
+  : $defaultUrl;
 
-/* ----------------------------------------------------
-   3) สร้าง src รูปโปรไฟล์อย่างปลอดภัย
----------------------------------------------------- */
-if (!empty($pic)) {
-  if (preg_match('~^(https?://|/)~', $pic)) {
-    $picSrc = $pic;
-  } else {
-    $safe   = basename($pic);
-    $fsPath = $imageDirFs . DIRECTORY_SEPARATOR . $safe;
-    $picSrc = (is_file($fsPath)) ? $imageDirUrl . rawurlencode($safe) : $defaultUrl;
-  }
-} else {
-  $picSrc = $defaultUrl;
+/* ------------ 3) รับพารามิเตอร์ cat + q ------------ */
+function escape_like($s) {
+  return str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $s);
+}
+$q_raw  = trim($_GET['q'] ?? '');
+$q      = mb_substr($q_raw, 0, 80);
+$q_like = $q !== '' ? '%' . escape_like($q) . '%' : '';
+
+$cat_raw = trim($_GET['cat'] ?? '');
+$allowedCats = [
+  'Art & Design',
+  'Health & Fitness',
+  'Technology & Business',
+  'Travel & Adventure',
+  'Food & Drink'
+];
+$cat = in_array($cat_raw, $allowedCats, true) ? $cat_raw : '';
+
+/* helper ทำไฮไลต์ + สร้าง URL */
+function activeAttr(string $currentCat, string $label): string {
+  $isActive = ($label === 'ALL') ? ($currentCat === '') : ($currentCat === $label);
+  return $isActive ? ' aria-current="page" class="active"' : '';
+}
+function buildUrl(array $params = []): string {
+  $self = $_SERVER['PHP_SELF'];
+  return htmlspecialchars($self . (empty($params) ? '' : ('?' . http_build_query($params))));
 }
 
-/* ----------------------------------------------------
-   4) ดึงรูปสินค้า จากตาราง product
----------------------------------------------------- */
-$stmtPop = $mysqli->prepare("
-  SELECT product_name, product_path
-  FROM product
-  ORDER BY product_createat DESC
-  LIMIT 8
-");
-$stmtPop->execute();
-$resultPop = $stmtPop->get_result();
+/* ------------ 4) Query เงื่อนไข ------------ */
+$filters = [];
+$params  = [];
+$types   = '';
 
-$stmtRnd = $mysqli->prepare("
-  SELECT product_name, product_path
-  FROM product
-  ORDER BY RAND()
-  LIMIT 8
-");
-$stmtRnd->execute();
-$resultRnd = $stmtRnd->get_result();
+if ($cat !== '') {
+  $filters[] = "categories_name = ?";
+  $params[]  = $cat;
+  $types    .= 's';
+}
+if ($q !== '') {
+  $filters[] = "product_name LIKE ?";
+  $params[]  = $q_like;
+  $types    .= 's';
+}
+
+if ($filters) {
+  $sql = "
+    SELECT product_id, product_name, product_path
+    FROM product
+    WHERE " . implode(' AND ', $filters) . "
+    ORDER BY product_createat DESC
+    LIMIT 24
+  ";
+  $stmt = $mysqli->prepare($sql);
+  if ($types !== '') $stmt->bind_param($types, ...$params);
+  $stmt->execute();
+  $resultFiltered = $stmt->get_result();
+  $stmt->close();
+} else {
+  $stmtPop = $mysqli->prepare("
+    SELECT product_id, product_name, product_path
+    FROM product
+    ORDER BY product_createat DESC
+    LIMIT 8
+  ");
+  $stmtPop->execute();
+  $resultPop = $stmtPop->get_result();
+  $stmtPop->close();
+
+  $stmtRnd = $mysqli->prepare("
+    SELECT product_id, product_name, product_path
+    FROM product
+    ORDER BY RAND()
+    LIMIT 8
+  ");
+  $stmtRnd->execute();
+  $resultRnd = $stmtRnd->get_result();
+  $stmtRnd->close();
+}
+
+/* query string ติดการ์ดไว้พากลับ (พก cat/q) */
+$carry = array_filter([
+  'cat' => $cat ?: null,
+  'q'   => $q   ?: null,
+]);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Main Page</title>
-  <link rel="stylesheet" href="../css/StyleMain.css">
+  <title>Pixora | Main</title>
+  <link rel="stylesheet" href="../css/StyleMain2.css">
+  <style>
+    /* ให้การ์ดคลิกได้ทั้งใบ แต่ยังคงสไตล์ .card เดิม */
+    a.card{ display:block; text-decoration:none; color:inherit; }
+    a.card:hover{ transform: translateY(-1px); transition: transform .15s ease; }
+    /* กัน hover ของ li ไม่กลบ active */
+    .sidebar li:hover a.active,
+    .sidebar li:hover a[aria-current="page"]{ background: var(--hover); }
+  </style>
 </head>
-
 <body>
-  <div class="page">
-    <header class="site-header">
-      <div class="topnav">
-        <a href="index.html" class="brand" aria-label="Pixora Home">
-          <h1>Pixora</h1>
-        </a>
+  <header class="site-header">
+    <div class="topnav">
+      <a href="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" class="brand" aria-label="Pixora Home">
+        <h1>Pixora</h1>
+      </a>
 
-        <div class="search-container">
-          <form class="search-box" action="/action_page.php" role="search">
-            <input type="text" class="search-input" placeholder="Search..." name="q">
-            <button type="submit" class="search-btn">Search</button>
-          </form>
-        </div>
-
-        <div class="top-actions" aria-label="User actions">
-          <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="Shopping cart">
-          <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="Favorites">
-          <img src="<?= htmlspecialchars($picSrc, ENT_QUOTES) ?>" alt="Profile"
-            width="100" height="100"
-            style="border-radius:50%;object-fit:cover">
-        </div>
+      <div class="search-container">
+        <form class="search-box" method="get" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" role="search" aria-label="Site search">
+          <?php if ($cat !== ''): ?>
+            <input type="hidden" name="cat" value="<?= htmlspecialchars($cat) ?>">
+          <?php endif; ?>
+          <input type="text" class="search-input" name="q" placeholder="Search images..." value="<?= htmlspecialchars($q_raw) ?>">
+          <button type="submit" class="search-btn">Search</button>
+        </form>
       </div>
-    </header>
 
-    <main class="layout">
-      <aside class="sidebar">
-        <ul>
-          <li><a href="#">Art & Design</a></li>
-          <li><a href="#">Health & Fitness</a></li>
-          <li><a href="#">Technology & Business</a></li>
-          <li><a href="#">Travel & Adventure</a></li>
-          <li><a href="#">Food & Drink</a></li>
-        </ul>
-      </aside>
+      <div class="top-actions" aria-label="User actions">
+        <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="cart">
+        <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
+        <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
+      </div>
+    </div>
+  </header>
 
-      <section class="block">
-        <h2>Popular Today</h2>
-        <div class="card-grid">
-          <?php if ($resultPop && $resultPop->num_rows): ?>
-            <?php while ($row = $resultPop->fetch_assoc()): ?>
+  <main class="layout">
+    <aside class="sidebar">
+      <ul>
+        <?php $base = []; if ($q !== '') $base['q'] = $q; ?>
+        <li><a href="<?= buildUrl($base) ?>"<?= activeAttr($cat, 'ALL') ?>>All</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Art & Design']) ?>"<?= activeAttr($cat, 'Art & Design') ?>>Art & Design</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Health & Fitness']) ?>"<?= activeAttr($cat, 'Health & Fitness') ?>>Health & Fitness</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Technology & Business']) ?>"<?= activeAttr($cat, 'Technology & Business') ?>>Technology & Business</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Travel & Adventure']) ?>"<?= activeAttr($cat, 'Travel & Adventure') ?>>Travel & Adventure</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Food & Drink']) ?>"<?= activeAttr($cat, 'Food & Drink') ?>>Food & Drink</a></li>
+      </ul>
+    </aside>
+
+    <div class="content">
+      <?php if (!empty($filters)): ?>
+        <section class="block">
+          <h2>
+            Results for
+            <?= $cat ? htmlspecialchars($cat) . ' ' : '' ?>
+            <?= $q ? '“' . htmlspecialchars($q_raw) . '”' : '' ?>
+          </h2>
+          <div class="card-grid">
+            <?php if ($resultFiltered && $resultFiltered->num_rows): ?>
+              <?php while ($r = $resultFiltered->fetch_assoc()): ?>
+                <?php
+                  $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+                  $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+                ?>
+                <a class="card" href="product.php?<?= $qs ?>">
+                  <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
+                  <h3 class="card-title"><?= htmlspecialchars($r['product_name']) ?></h3>
+                </a>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <p>No results found.</p>
+            <?php endif; ?>
+          </div>
+        </section>
+      <?php else: ?>
+        <section class="block">
+          <h2>Popular Today</h2>
+          <div class="card-grid">
+            <?php while ($r = $resultPop->fetch_assoc()): ?>
               <?php
-              $safeFile = basename($row['product_path']);
-              $imgPath  = $productDirUrl . rawurlencode($safeFile);
-
-              // (ทางเลือก) ถ้าอยากมีรูป fallback เมื่อไฟล์หาย
-              // $fallback = $projectUrlBase . '/assets/no-image.png';
-              // if (!is_file($productDirFs . DIRECTORY_SEPARATOR . $safeFile)) {
-              //   $imgPath = $fallback;
-              // }
+                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
-              <article class="card">
-                <img src="<?= htmlspecialchars($imgPath) ?>"
-                  alt="<?= htmlspecialchars($row['product_name']) ?>" />
-                <h3 class="card-title"><?= htmlspecialchars($row['product_name']) ?></h3>
-              </article>
+              <a class="card" href="product.php?<?= $qs ?>">
+                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
+                <h3 class="card-title"><?= htmlspecialchars($r['product_name']) ?></h3>
+              </a>
             <?php endwhile; ?>
-          <?php else: ?>
-            <p>No products yet.</p>
-          <?php endif; ?>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      <!-- Random Picture -->
-      <section class="block">
-        <h2>Random Picture</h2>
-        <div class="card-grid">
-          <?php if ($resultRnd && $resultRnd->num_rows): ?>
-            <?php while ($row = $resultRnd->fetch_assoc()): ?>
+        <section class="block">
+          <h2>Random Picture</h2>
+          <div class="card-grid">
+            <?php while ($r = $resultRnd->fetch_assoc()): ?>
               <?php
-              $safeFile = basename($row['product_path']);
-              $imgPath  = $productDirUrl . rawurlencode($safeFile);
+                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
-              <article class="card">
-                <img src="<?= htmlspecialchars($imgPath) ?>"
-                  alt="<?= htmlspecialchars($row['product_name']) ?>" />
-                <h3 class="card-title"><?= htmlspecialchars($row['product_name']) ?></h3>
-              </article>
+              <a class="card" href="product.php?<?= $qs ?>">
+                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
+                <h3 class="card-title"><?= htmlspecialchars($r['product_name']) ?></h3>
+              </a>
             <?php endwhile; ?>
-          <?php else: ?>
-            <p>No products </p>
-          <?php endif; ?>
-        </div>
-      </section>
-      </section>
-    </main>
-  </div>
+          </div>
+        </section>
+      <?php endif; ?>
+    </div>
+  </main>
 </body>
-
 </html>

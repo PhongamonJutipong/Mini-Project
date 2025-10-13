@@ -184,6 +184,17 @@ body {
   border-radius: 12px;
 }
 
+.sidebar a.active,
+.sidebar a[aria-current="page"]{
+  background: var(--hover);
+  color: #e11d48;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  padding: 10px 12px; /* เผื่อกรณี a ไม่มี padding จาก li */
+  display: block;
+}
+
 @media (max-width: 900px){
   .layout{
     grid-template-columns: 1fr;
