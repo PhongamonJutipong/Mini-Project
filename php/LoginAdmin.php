@@ -15,7 +15,6 @@
       <a href="index.php">Home</a>
     </div>
     <div class="nav-2">
-      <a href="register.php">Register</a>
       <a href="Login.php">Login</a>
     </div>
   </nav>

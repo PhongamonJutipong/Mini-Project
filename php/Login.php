@@ -16,7 +16,7 @@
             </div>
             <div class="nav-2">
             <a href="register.php">Register</a>
-            <a href="Login.php">Login</a>
+            <a href="LoginAdmin.php">Admin</a>
             </div>
         </nav>
 
