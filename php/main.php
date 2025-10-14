@@ -6,12 +6,11 @@ require __DIR__ . '/conn.php';
 $projectFsBase  = dirname(__DIR__);
 $projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-$imageDirFs    = $projectFsBase . '/image_user';      
-$imageDirUrl   = $projectUrlBase . '/php/image_user/';  
-$productDirUrl = $projectUrlBase . '/php/image_product/'; 
-$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/'; 
+$imageDirFs    = $projectFsBase . '/php/image_user';
+$imageDirUrl   = $projectUrlBase . '/php/image_user/';
+$productDirUrl = $projectUrlBase . '/php/image_product/';
+$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/';
 $defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png';
-
 
 /* ------------ 2) Profile picture ------------ */
 $pic = $_SESSION['user_picture'] ?? null;
@@ -29,7 +28,8 @@ $picSrc = (!empty($pic) && is_file($imageDirFs . '/' . basename($pic)))
   : $defaultUrl;
 
 /* ------------ 3) รับพารามิเตอร์ cat + q ------------ */
-function escape_like($s) {
+function escape_like($s)
+{
   return str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $s);
 }
 $q_raw  = trim($_GET['q'] ?? '');
@@ -47,11 +47,13 @@ $allowedCats = [
 $cat = in_array($cat_raw, $allowedCats, true) ? $cat_raw : '';
 
 /* helper ทำไฮไลต์ + สร้าง URL */
-function activeAttr(string $currentCat, string $label): string {
+function activeAttr(string $currentCat, string $label): string
+{
   $isActive = ($label === 'ALL') ? ($currentCat === '') : ($currentCat === $label);
   return $isActive ? ' aria-current="page" class="active"' : '';
 }
-function buildUrl(array $params = []): string {
+function buildUrl(array $params = []): string
+{
   $self = $_SERVER['PHP_SELF'];
   return htmlspecialchars($self . (empty($params) ? '' : ('?' . http_build_query($params))));
 }
@@ -115,12 +117,14 @@ $carry = array_filter([
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixora | Main</title>
   <link rel="stylesheet" href="../css/StyleMain2.css">
 </head>
+
 <body>
   <header class="site-header">
     <div class="topnav">
@@ -139,7 +143,7 @@ $carry = array_filter([
       </div>
 
       <div class="top-actions" aria-label="User actions">
-        <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="cart">
+        <a href=""><img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="cart"></a>
         <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
         <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
       </div>
@@ -149,13 +153,14 @@ $carry = array_filter([
   <main class="layout">
     <aside class="sidebar">
       <ul>
-        <?php $base = []; if ($q !== '') $base['q'] = $q; ?>
-        <li><a href="<?= buildUrl($base) ?>"<?= activeAttr($cat, 'ALL') ?>>All</a></li>
-        <li><a href="<?= buildUrl($base + ['cat' => 'Art & Design']) ?>"<?= activeAttr($cat, 'Art & Design') ?>>Art & Design</a></li>
-        <li><a href="<?= buildUrl($base + ['cat' => 'Health & Fitness']) ?>"<?= activeAttr($cat, 'Health & Fitness') ?>>Health & Fitness</a></li>
-        <li><a href="<?= buildUrl($base + ['cat' => 'Technology & Business']) ?>"<?= activeAttr($cat, 'Technology & Business') ?>>Technology & Business</a></li>
-        <li><a href="<?= buildUrl($base + ['cat' => 'Travel & Adventure']) ?>"<?= activeAttr($cat, 'Travel & Adventure') ?>>Travel & Adventure</a></li>
-        <li><a href="<?= buildUrl($base + ['cat' => 'Food & Drink']) ?>"<?= activeAttr($cat, 'Food & Drink') ?>>Food & Drink</a></li>
+        <?php $base = [];
+        if ($q !== '') $base['q'] = $q; ?>
+        <li><a href="<?= buildUrl($base) ?>" <?= activeAttr($cat, 'ALL') ?>>All</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Art & Design']) ?>" <?= activeAttr($cat, 'Art & Design') ?>>Art & Design</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Health & Fitness']) ?>" <?= activeAttr($cat, 'Health & Fitness') ?>>Health & Fitness</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Technology & Business']) ?>" <?= activeAttr($cat, 'Technology & Business') ?>>Technology & Business</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Travel & Adventure']) ?>" <?= activeAttr($cat, 'Travel & Adventure') ?>>Travel & Adventure</a></li>
+        <li><a href="<?= buildUrl($base + ['cat' => 'Food & Drink']) ?>" <?= activeAttr($cat, 'Food & Drink') ?>>Food & Drink</a></li>
       </ul>
     </aside>
 
@@ -171,8 +176,8 @@ $carry = array_filter([
             <?php if ($resultFiltered && $resultFiltered->num_rows): ?>
               <?php while ($r = $resultFiltered->fetch_assoc()): ?>
                 <?php
-                  $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-                  $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
                 ?>
                 <a class="card" href="product.php?<?= $qs ?>">
                   <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -190,8 +195,8 @@ $carry = array_filter([
           <div class="card-grid">
             <?php while ($r = $resultPop->fetch_assoc()): ?>
               <?php
-                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+              $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+              $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
               <a class="card" href="product.php?<?= $qs ?>">
                 <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -206,8 +211,8 @@ $carry = array_filter([
           <div class="card-grid">
             <?php while ($r = $resultRnd->fetch_assoc()): ?>
               <?php
-                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+              $img = $productDirUrl . rawurlencode(basename($r['product_path']));
+              $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
               <a class="card" href="product.php?<?= $qs ?>">
                 <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -220,4 +225,5 @@ $carry = array_filter([
     </div>
   </main>
 </body>
+
 </html>
