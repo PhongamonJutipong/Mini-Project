@@ -10,7 +10,7 @@ $imageDirFs    = __DIR__ . '/image_user';        // C:\xampp\htdocs\Mini Project
 $imageDirUrl   = $projectUrlBase . '/php/image_user/';  // /Mini Project/php/image_user/
 $productDirFs  = __DIR__ . '/image_product';     // C:\xampp\htdocs\Mini Project\php\image_product
 $productDirUrl = $projectUrlBase . '/php/image_product/'; // /Mini Project/php/image_product/
-$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/'; // /Mini Project/php/picture_and_video/
+$iconDirUrl    = $projectUrlBase . '/picture and video'; // /Mini Project/php/picture_and_video/
 $defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png'; // /Mini Project/php/assets/default-avatar.png
 
 /* ------------ 2) Profile picture ------------ */
@@ -145,9 +145,7 @@ $carry = array_filter([
       </div>
 
       <div class="top-actions" aria-label="User actions">
-        <a href="cart.php" class="icon-btn" title="Cart">
-          <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="Cart">
-        </a>
+        <a href="cart.php" class="icon-btn" title="Cart">eiei</a>
         <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
         <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
       </div>

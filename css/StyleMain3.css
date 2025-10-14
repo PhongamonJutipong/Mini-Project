@@ -5,18 +5,18 @@
   font-family: Arial, sans-serif;
 }
 
-:root{
+:root {
   --bg: #ffffff;
   --text: #111;
   --muted: #6b7280;
   --card-border: #eceff5;
   --hover: #e9eefc;
   --radius: 20px;
-  --shadow: 0 4px 10px rgba(0,0,0,.04);
+  --shadow: 0 4px 10px rgba(0, 0, 0, .04);
 }
 
-a{
-    text-decoration: none;
+a {
+  text-decoration: none;
 }
 
 body {
@@ -29,7 +29,7 @@ body {
   top: 0;
   z-index: 50;
   background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
 }
 
 .topnav {
@@ -40,13 +40,13 @@ body {
   padding: 12px 20px;
 }
 
-.brand h1{
+.brand h1 {
   color: #e11d48;
   font-size: 1.6rem;
   letter-spacing: .5px;
 }
 
-.search-container{
+.search-container {
   flex: 1;
   max-width: 640px;
   margin: 0 12px;
@@ -57,12 +57,12 @@ body {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(17,17,17,0.08);
+  background: rgba(255, 255, 255, 0.7);
+  border: 3px solid rgba(17, 17, 17, 0.08);
   border-radius: 9999px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .search-input {
@@ -74,7 +74,7 @@ body {
   color: var(--text);
 }
 
-.search-input::placeholder{
+.search-input::placeholder {
   color: var(--muted);
 }
 
@@ -87,13 +87,13 @@ body {
   cursor: pointer;
 }
 
-.top-actions{
-  display: flex;         
+.top-actions {
+  display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.top-actions img{
+.top-actions img {
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -101,12 +101,12 @@ body {
   padding: 3px;
   cursor: pointer;
   transition: transform .2s ease, box-shadow .2s ease;
-  border: 1px solid rgba(17,17,17,0.06);
+  border: 1px solid rgba(17, 17, 17, 0.06);
 }
 
-.top-actions img:hover{
+.top-actions img:hover {
   transform: scale(1.06);
-  box-shadow: 0 0 0 4px rgba(225,29,72,0.08);
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.08);
 }
 
 .layout {
@@ -118,38 +118,38 @@ body {
   margin: 0 auto;
 }
 
-.sidebar{
+.sidebar {
   border-radius: 18px;
   padding: 18px;
 }
 
-.sidebar ul{
+.sidebar ul {
   list-style: none;
   display: grid;
   gap: 10px;
 }
 
-.sidebar li{
+.sidebar li {
   padding: 10px 12px;
   border-radius: 12px;
 }
 
-.sidebar li:hover{
+.sidebar li:hover {
   background: var(--hover);
 }
 
-.sidebar a{
+.sidebar a {
   color: inherit;
   text-decoration: none;
   display: block;
 }
 
-.content{
+.content {
   display: grid;
   gap: 20px;
 }
 
-.block{
+.block {
   border-radius: var(--radius);
   padding: 16px;
   border: 1px solid var(--card-border);
@@ -157,18 +157,18 @@ body {
   box-shadow: var(--shadow);
 }
 
-.block h2{
+.block h2 {
   margin-bottom: 12px;
   font-size: 1.25rem;
 }
 
-.card-grid{
+.card-grid {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
-.card{
+.card {
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 10px;
@@ -177,7 +177,7 @@ body {
   background: #fff;
 }
 
-.card img{
+.card img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
@@ -185,54 +185,62 @@ body {
 }
 
 .card-title {
-  color: #e63946;          /* 🔹 เปลี่ยนเป็นสีที่ต้องการ เช่น แดงสด */
+  color: #e63946;
+  /* 🔹 เปลี่ยนเป็นสีที่ต้องการ เช่น แดงสด */
   font-weight: 600;
   font-size: 1rem;
   margin-top: 8px;
-  text-align: center;      /* จัดกลาง (ถ้าต้องการ) */
+  text-align: center;
+  /* จัดกลาง (ถ้าต้องการ) */
   transition: color 0.2s ease;
 }
 
 /* Optional: เปลี่ยนสีเมื่อ hover */
 .card:hover .card-title {
-  color: #1d3557;          /* 🔹 เปลี่ยนเป็นสีน้ำเงินเข้มเวลา hover */
+  color: #1d3557;
+  /* 🔹 เปลี่ยนเป็นสีน้ำเงินเข้มเวลา hover */
 }
 
 
 .sidebar a.active,
-.sidebar a[aria-current="page"]{
+.sidebar a[aria-current="page"] {
   background: var(--hover);
   color: #e11d48;
   font-weight: 600;
   border-radius: 12px;
   border: 1px solid var(--card-border);
-  padding: 10px 12px; /* เผื่อกรณี a ไม่มี padding จาก li */
+  padding: 10px 12px;
+  /* เผื่อกรณี a ไม่มี padding จาก li */
   display: block;
 }
 
-@media (max-width: 900px){
-  .layout{
+@media (max-width: 900px) {
+  .layout {
     grid-template-columns: 1fr;
   }
-  .sidebar{
+
+  .sidebar {
     order: -1;
   }
 }
 
-@media (max-width: 720px){
-  .topnav{
+@media (max-width: 720px) {
+  .topnav {
     flex-wrap: wrap;
     gap: 10px;
   }
-  .brand{
+
+  .brand {
     order: 1;
   }
-  .search-container{
+
+  .search-container {
     order: 3;
     width: 100%;
     max-width: none;
   }
-  .top-actions{
+
+  .top-actions {
     order: 2;
     margin-left: auto;
   }
