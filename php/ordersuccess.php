@@ -36,9 +36,9 @@ $order_id = $mysqli->insert_id; // เอา order_id มาใช้ต่อ
 
 // ✅ 3. เพิ่มข้อมูลสินค้าใน order_detail
 while ($item = $result->fetch_assoc()) {
-    $sql_detail = "INSERT INTO order_detail (order_id, product_id, price_each) VALUES (?, ?, ?)";
+    $sql_detail = "INSERT INTO order_detail (order_id, product_id, price, sub_total) VALUES (?, ?, ?, ?)";
     $stmt_detail = $mysqli->prepare($sql_detail);
-    $stmt_detail->bind_param("iid", $order_id, $item['product_id'], $item['price_snap_shot']);
+    $stmt_detail->bind_param("iidd", $order_id, $item['product_id'], $item['price_snap_shot'], $item['sub_total']);
     $stmt_detail->execute();
 }
 
@@ -53,6 +53,6 @@ $stmt_del->bind_param("i", $user_id);
 $stmt_del->execute();
 
 // ✅ 5. แจ้งเตือนและพาไปหน้า Gallery
-echo "<script>alert('สั่งซื้อสำเร็จ!'); window.location='user_gallery.php';</script>";
+echo "<script>alert('สั่งซื้อสำเร็จ! ✅'); window.location='user_gallery.php';</script>";
 exit;
 ?>

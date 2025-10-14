@@ -1,5 +1,3 @@
-Cart
-
 <?php
 session_start();
 require 'conn.php';
@@ -81,11 +79,14 @@ $stmt->close();
             <button class="btn btn-danger">🗑 ลบ</button>
           </form>
         </div>
-      </div>
     </div>
+    <?php 
+      endforeach; 
+    ?>
     <form method="POST" action="order.php">
   <button class="btn btn-checkout">✅ ชำระเงิน</button>
 </form>
+<?php endif;  ?>
   </section>
 </main>
 </body>
