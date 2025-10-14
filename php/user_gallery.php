@@ -2,33 +2,51 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>Image Gallery</title>
+<title>My Purchased Images</title>
 <link rel="stylesheet" href="../css/StyleUsergallery.css">
 </head>
 
 <body>
-
 <?php
 require 'conn.php'; 
+session_start();
 
-// ✅ ใช้ตาราง user_product (สัมพันธ์ระหว่าง user และ product)
-$sql = "SELECT u.user_id, p.product_id, p.product_path
-        FROM user_product AS up
-        JOIN user AS u ON up.up_iduser = u.user_id
-        JOIN product AS p ON up.up_idproduct = p.product_id";
+$user_id = $_SESSION['user_id'] ?? ''; 
 
-$result = mysqli_query($mysqli, $sql);
+$sql = "
+    SELECT 
+        p.product_id,
+        p.product_name,
+        p.product_path,
+        p.product_price,
+        o.order_id,
+        o.order_date
+    FROM orders AS o
+    JOIN order_detail AS od ON o.order_id = od.order_id
+    JOIN product AS p ON od.product_id = p.product_id
+    WHERE o.user_id = ?
+    ORDER BY o.order_date DESC
+";
+
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <h2 style="text-align:center;">Gallery</h2>
 <div class="gallery">
     <?php
-    if ($result && mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo '<img src="../image_product/' . htmlspecialchars($row["product_path"]) . '" alt="Image">';
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<div class="img-box">';
+            echo '<img src="../image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
+            echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
+            echo '<small>สั่งซื้อเมื่อ: ' . htmlspecialchars($row["order_date"]) . '</small>';
+            echo '</div>';
         }
     } else {
-        echo "<p>ไม่มีรูปภาพในฐานข้อมูล</p>";
+        echo "<p style='text-align:center;'>You didn't buy any picture!</p>";
     }
     ?>
 </div>
