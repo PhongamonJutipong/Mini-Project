@@ -3,15 +3,16 @@ session_start();
 require __DIR__ . '/conn.php';
 
 /* 1) Base paths */
-$projectFsBase  = dirname(__DIR__);
+$projectFsBase  = dirname(__DIR__);  // = /pixora
 $projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-$imageDirFs    = $projectFsBase . '/image_user';
-$imageDirUrl   = $projectUrlBase . '/image_user/';
-$productDirFs  = $projectFsBase . '../php/image_product';
-$productDirUrl = $projectUrlBase . '/image_product/' ;
-$iconDirUrl    = $projectUrlBase . '/picture_and_video/';
-$defaultUrl    = $projectUrlBase . '/assets/default-avatar.png';
+$imageDirFs    = $projectFsBase . '/php/image_user';      
+$imageDirUrl   = $projectUrlBase . '/php/image_user/';    
+$productDirFs  = $projectFsBase . '/php/image_product';    
+$productDirUrl = $projectUrlBase . '/php/image_product/';  
+$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/';
+$defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png';
+
 
 /* 2) Profile pic */
 $pic = $_SESSION['user_picture'] ?? null;
