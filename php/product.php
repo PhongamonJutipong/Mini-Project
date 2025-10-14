@@ -6,15 +6,14 @@ require __DIR__ . '/conn.php';
 $projectFsBase  = dirname(__DIR__);  // = /pixora
 $projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-$imageDirFs    = $projectFsBase . '/php/image_user';      
-$imageDirUrl   = $projectUrlBase . '/php/image_user/';    
-$productDirFs  = $projectFsBase . '/php/image_product';    
-$productDirUrl = $projectUrlBase . '/php/image_product/';  
+$imageDirFs    = $projectFsBase . '/php/image_user';
+$imageDirUrl   = $projectUrlBase . '/php/image_user/';
+$productDirFs  = $projectFsBase . '/php/image_product';
+$productDirUrl = $projectUrlBase . '/php/image_product/';
 $iconDirUrl    = $projectUrlBase . '/php/picture_and_video/';
 $defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png';
 
-
-/* 2) Profile pic */
+/* 2) Profile pic (เหมือนก่อนหน้า) */
 $pic = $_SESSION['user_picture'] ?? null;
 if (!$pic && !empty($_SESSION['user_id'])) {
     $stmt = $mysqli->prepare("SELECT user_picture FROM user WHERE user_id = ?");
@@ -71,100 +70,102 @@ $imgUrl   = is_file($imgFs)
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= htmlspecialchars($product['product_name']) ?> | Pixora</title>
-    <link rel="stylesheet" href="../css/StyleProduct.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><?= htmlspecialchars($product['product_name']) ?> | Pixora</title>
+  <link rel="stylesheet" href="../css/StyleProduct.css">
 </head>
-
 <body>
-    <!-- Header -->
-    <header class="site-header">
-        <div class="topnav">
-            <a href="main.php" class="brand" aria-label="Pixora Home">
-                <h1>Pixora</h1>
-            </a>
 
-            <div class="search-container">
-                <form class="search-box" method="get" action="main.php" role="search">
-                    <?php if ($backCat): ?><input type="hidden" name="cat" value="<?= htmlspecialchars($backCat) ?>"><?php endif; ?>
-                    <?php if ($backQ):   ?><input type="hidden" name="q" value="<?= htmlspecialchars($backQ)   ?>"><?php endif; ?>
-                    <input type="text" class="search-input" name="q" placeholder="Search images..." value="">
-                    <button class="search-btn">Search</button>
-                </form>
-            </div>
+  <!-- Header: ให้เหมือนกับที่ส่งมาก่อนหน้า -->
+  <header class="site-header">
+    <div class="topnav">
+      <a href="main.php" class="brand" aria-label="Pixora Home"><h1>Pixora</h1></a>
 
-            <div class="top-actions">
-                <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="cart">
-                <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
-                <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
-            </div>
-        </div>
-    </header>
+      <div class="search-container">
+        <form class="search-box" method="get" action="main.php" role="search" aria-label="Site search">
+          <?php if ($backCat): ?><input type="hidden" name="cat" value="<?= htmlspecialchars($backCat) ?>"><?php endif; ?>
+          <?php if ($backQ):   ?><input type="hidden" name="q"   value="<?= htmlspecialchars($backQ)   ?>"><?php endif; ?>
+          <input type="text" class="search-input" name="q" placeholder="Search images..." value="">
+          <button type="submit" class="search-btn">Search</button>
+        </form>
+      </div>
 
-    <!-- New toolbar/breadcrumb -->
-    <div class="subbar">
-        <div class="subbar-inner">
-            <a class="crumb" href="<?= htmlspecialchars($backUrl) ?>">← Back</a>
-            <span class="sep">/</span>
-            <span class="crumb muted"><?= htmlspecialchars($product['categories_name']) ?></span>
-            <span class="sep">/</span>
-            <span class="crumb current"><?= htmlspecialchars($product['product_name']) ?></span>
-        </div>
+      <div class="top-actions" aria-label="User actions">
+        <a href="cart.php" class="icon-btn" title="Cart">
+          <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="Cart">
+        </a>
+        <a href="#" class="icon-btn" title="Favorite">
+          <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="Fav">
+        </a>
+        <a href="profile.php" class="icon-btn" title="Profile">
+          <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
+        </a>
+      </div>
     </div>
+  </header>
 
-    <!-- Main -->
-    <main class="layout layout--product">
-        <!-- Left: sticky image -->
-        <section class="block block--media">
-            <figure class="product-figure sticky">
-                <img src="<?= htmlspecialchars($imgUrl) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
-            </figure>
-        </section>
+  <!-- New toolbar/breadcrumb -->
+  <div class="subbar">
+    <div class="subbar-inner">
+      <a class="crumb" href="<?= htmlspecialchars($backUrl) ?>">← Back</a>
+      <span class="sep">/</span>
+      <span class="crumb muted"><?= htmlspecialchars($product['categories_name']) ?></span>
+      <span class="sep">/</span>
+      <span class="crumb current"><?= htmlspecialchars($product['product_name']) ?></span>
+    </div>
+  </div>
 
-        <!-- Right: info + sticky CTA -->
-        <section class="block block--info">
-            <!-- Title -->
-            <header class="p-header">
-                <h2 class="p-title"><?= htmlspecialchars($product['product_name']) ?></h2>
-                <div class="p-badges">
-                    <span class="pill"><?= htmlspecialchars($product['categories_name']) ?></span>
-                    <span class="pill"><?= htmlspecialchars(ucfirst($product['product_status'])) ?></span>
-                </div>
-            </header>
+  <!-- Main -->
+  <main class="layout layout--product">
+    <!-- Left: sticky image -->
+    <section class="block block--media">
+      <figure class="product-figure sticky">
+        <img src="<?= htmlspecialchars($imgUrl) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+      </figure>
+    </section>
 
-            <!-- Sticky CTA line -->
-            <div class="p-cta sticky">
-                <div class="price">฿<?= number_format((float)$product['product_price'], 2) ?></div>
-                <div class="cta-actions">
-                    <form method="post" action="add_to_cart.php">
-                        <input type="hidden" name="product_id" value="<?= (int)$product['product_id'] ?>">
-                        <button class="btn">Add to cart</button>
-                    </form>
-                    <a class="btn btn--ghost" href="<?= htmlspecialchars($backUrl) ?>">Back to list</a>
-                </div>
-            </div>
+    <!-- Right: info + sticky CTA -->
+    <section class="block block--info">
+      <!-- Title -->
+      <header class="p-header">
+        <h2 class="p-title"><?= htmlspecialchars($product['product_name']) ?></h2>
+        <div class="p-badges">
+          <span class="pill"><?= htmlspecialchars($product['categories_name']) ?></span>
+          <span class="pill"><?= htmlspecialchars(ucfirst($product['product_status'])) ?></span>
+        </div>
+      </header>
 
-            <!-- Description -->
-            <div class="p-body">
-                <?php if (!empty($product['product_description'])): ?>
-                    <p><?= nl2br(htmlspecialchars($product['product_description'])) ?></p>
-                <?php else: ?>
-                    <p class="muted">No description.</p>
-                <?php endif; ?>
-            </div>
+      <!-- Sticky CTA line -->
+      <div class="p-cta sticky">
+        <div class="price">฿<?= number_format((float)$product['product_price'], 2) ?></div>
+        <div class="cta-actions">
+          <form method="post" action="add_to_cart.php">
+            <input type="hidden" name="product_id" value="<?= (int)$product['product_id'] ?>">
+            <button class="btn">Add to cart</button>
+          </form>
+          <a class="btn btn--ghost" href="<?= htmlspecialchars($backUrl) ?>">Back to list</a>
+        </div>
+      </div>
 
-            <!-- Meta -->
-            <footer class="p-meta">
-                <p class="muted">
-                    Creator: <?= htmlspecialchars($product['creator_name'] ?? '—') ?>
-                    • Created at: <?= htmlspecialchars($product['product_createat']) ?>
-                </p>
-            </footer>
-        </section>
-    </main>
+      <!-- Description -->
+      <div class="p-body">
+        <?php if (!empty($product['product_description'])): ?>
+          <p><?= nl2br(htmlspecialchars($product['product_description'])) ?></p>
+        <?php else: ?>
+          <p class="muted">No description.</p>
+        <?php endif; ?>
+      </div>
+
+      <!-- Meta -->
+      <footer class="p-meta">
+        <p class="muted">
+          Creator: <?= htmlspecialchars($product['creator_name'] ?? '—') ?>
+          • Created at: <?= htmlspecialchars($product['product_createat']) ?>
+        </p>
+      </footer>
+    </section>
+  </main>
 </body>
-
 </html>

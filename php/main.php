@@ -103,7 +103,7 @@ $carry = array_filter(['cat'=>$cat ?: null,'q'=>$q ?: null]);
     <div class="top-actions">
       <a href="cart.php" class="icon-btn" title="Cart"><img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="Cart"></a>
       <a href="#" class="icon-btn" title="Favorite"><img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="Fav"></a>
-      <a href="profile.php" class="icon-btn" title="Profile"><img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile"></a>
+      <a href="editProfile.php" class="icon-btn" title="Profile"><img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile"></a>
     </div>
   </div>
 </header>
