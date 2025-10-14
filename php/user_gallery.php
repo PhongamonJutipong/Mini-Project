@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>My Purchased Images</title>
-<link rel="stylesheet" href="../css/StyleUsergallery.css">
+<link rel="stylesheet" href="../css/StyleUsergallery1.css">
 </head>
 
 <body>
@@ -35,20 +35,23 @@ $result = $stmt->get_result();
 ?>
 
 <h2 style="text-align:center;">Gallery</h2>
-<div class="gallery">
-    <?php
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo '<div class="img-box">';
-            echo '<img src="../image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
-            echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
-            echo '<small>สั่งซื้อเมื่อ: ' . htmlspecialchars($row["order_date"]) . '</small>';
-            echo '</div>';
+<div class="mainbox">
+    
+    <div class="gallery">
+        <?php
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<div class="img-box">';
+                echo '<img src="../image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
+                echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
+                echo '<small>สั่งซื้อเมื่อ: ' . htmlspecialchars($row["order_date"]) . '</small>';
+                echo '</div>';
+            }
+        } else {
+            echo "<p style='text-align:center;'>You didn't buy any picture!</p>";
         }
-    } else {
-        echo "<p style='text-align:center;'>You didn't buy any picture!</p>";
-    }
-    ?>
+        ?>
+    </div>
 </div>
 
 </body>

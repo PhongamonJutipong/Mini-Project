@@ -1,0 +1,74 @@
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  margin-top: 30px;
+  text-align: center;
+  color: #333;
+}
+
+.mainbox {
+  margin: 20px auto;
+  width: 100%;
+  height: 80vh;
+  max-height:80vh ;
+  overflow-y: auto;
+  max-width: 1200px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.img-box {
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.img-box img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.img-box h3 {
+  font-size: 1.1rem;
+  margin: 10px 0 5px;
+  color: #333;
+}
+
+.img-box small {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Responsive สำหรับหน้าจอเล็ก */
+@media (max-width: 600px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .img-box img {
+    height: 150px;
+  }
+}

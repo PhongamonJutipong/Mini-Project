@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.5;
+}
+
+
+
+
+/* Header */
+.site-header {
+    background-color: #1e90ff;
+    color: white;
+    padding: 15px 20px;
+}
+
+.topnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topnav h1 {
+    font-size: 1.8rem;
+}
+
+.top-actions a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #0077cc;
+    transition: 0.3s;
+}
+
+.top-actions a:hover {
+    background-color: #005fa3;
+}
+
+/* Main container */
+.container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+/* Page title */
+.page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #1e90ff;
+}
+
+/* Cart container */
+.cart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Cart item */
+.cart-item {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+}
+
+.cart-thumb img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cart-info {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.cart-title {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.cart-desc {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.cart-price {
+    font-weight: bold;
+    color: #1e90ff;
+    margin-top: 5px;
+}
+
+.cart-actions button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.cart-actions button:hover {
+    background-color: #d9363e;
+}
+
+/* Cart summary / total */
+.cart-summary {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.cart-summary h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.btn-checkout {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-checkout:hover {
+    background-color: #218838;
+}
+
+/* Empty cart */
+.empty-cart {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+    margin-top: 30px;
+}

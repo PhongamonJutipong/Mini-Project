@@ -40,7 +40,7 @@ while ($row = $result->fetch_assoc()) {
 <head>
 <meta charset="UTF-8">
 <title>Pixora · สรุปคำสั่งซื้อ</title>
-<link rel="stylesheet" href="../css/StyleOrder.css">
+<link rel="stylesheet" href="css\Styleorders.css">
 </head>
 
 <body>
