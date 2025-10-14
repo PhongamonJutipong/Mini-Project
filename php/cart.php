@@ -1,5 +1,3 @@
-Cart
-
 <?php
 session_start();
 require 'conn.php';
@@ -89,5 +87,4 @@ $stmt->close();
   </section>
 </main>
 </body>
-
 </html>
