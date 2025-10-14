@@ -1,12 +1,11 @@
 <?php
-session_start(); // 
+session_start(); 
 $db = mysqli_connect("localhost", "root", "", "picture_store");
 
 if (!$db) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-// ✅ ตรวจสอบว่ามีคนล็อกอินไหม
 if (!isset($_SESSION['user_id'])) {
     die("กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูล");
 }
