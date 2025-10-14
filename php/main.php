@@ -6,11 +6,12 @@ require __DIR__ . '/conn.php';
 $projectFsBase  = dirname(__DIR__);
 $projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-$imageDirFs    = $projectFsBase . '/image_user';
-$imageDirUrl   = $projectUrlBase . '/image_user/';
-$productDirUrl = $projectUrlBase . '/image_product/';
-$iconDirUrl    = $projectUrlBase . '/picture_and_video/';
-$defaultUrl    = $projectUrlBase . '/assets/default-avatar.png';
+$imageDirFs    = $projectFsBase . '/image_user';      
+$imageDirUrl   = $projectUrlBase . '/php/image_user/';  
+$productDirUrl = $projectUrlBase . '/php/image_product/'; 
+$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/'; 
+$defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png';
+
 
 /* ------------ 2) Profile picture ------------ */
 $pic = $_SESSION['user_picture'] ?? null;
@@ -119,14 +120,6 @@ $carry = array_filter([
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixora | Main</title>
   <link rel="stylesheet" href="../css/StyleMain2.css">
-  <style>
-    /* ให้การ์ดคลิกได้ทั้งใบ แต่ยังคงสไตล์ .card เดิม */
-    a.card{ display:block; text-decoration:none; color:inherit; }
-    a.card:hover{ transform: translateY(-1px); transition: transform .15s ease; }
-    /* กัน hover ของ li ไม่กลบ active */
-    .sidebar li:hover a.active,
-    .sidebar li:hover a[aria-current="page"]{ background: var(--hover); }
-  </style>
 </head>
 <body>
   <header class="site-header">
