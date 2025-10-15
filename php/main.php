@@ -3,15 +3,24 @@ session_start();
 require __DIR__ . '/conn.php';
 
 /* ------------ 1) Base paths ------------ */
-$projectFsBase  = dirname(__DIR__); // = C:\xampp\htdocs\Mini Project
-$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // = /Mini Project
+$projectFsBase  = dirname(__DIR__);                       // C:\xampp\htdocs\Mini Project
+$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // /Mini Project
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
-$imageDirFs    = __DIR__ . '/image_user';        // C:\xampp\htdocs\Mini Project\php\image_user
-$imageDirUrl   = $projectUrlBase . '/php/image_user/';  // /Mini Project/php/image_user/
-$productDirFs  = __DIR__ . '/image_product';     // C:\xampp\htdocs\Mini Project\php\image_product
-$productDirUrl = $projectUrlBase . '/php/image_product/'; // /Mini Project/php/image_product/
-$iconDirUrl    = $projectUrlBase . '/picture and video'; // /Mini Project/php/picture_and_video/
-$defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png'; // /Mini Project/php/assets/default-avatar.png
+
+/* ทำเวอร์ชัน URL-safe กรณีชื่อโฟลเดอร์มีช่องว่าง */
+$projectUrlBaseSafe = str_replace(' ', '%20', $projectUrlBase);
+
+/* โฟลเดอร์รูปผู้ใช้/สินค้า (FS + URL) */
+$imageDirFs   = __DIR__ . '/image_user';                              // C:\...\php\image_user
+$imageDirUrl  = $projectUrlBaseSafe . '/php/image_user/';             // /Mini%20Project/php/image_user/
+$productDirFs = __DIR__ . '/image_product';                           // C:\...\php\image_product
+$productDirUrl = $projectUrlBaseSafe . '/php/image_product/';          // /Mini%20Project/php/image_product/
+
+/* โฟลเดอร์ไอคอน */
+$iconDirUrl   = $projectUrlBaseSafe . '/php/picture_and_video/';      // /Mini%20Project/php/picture_and_video/
+
+/* รูป default */
+$defaultUrl   = $projectUrlBaseSafe . '/php/assets/default-avatar.png';
 
 /* ------------ 2) Profile picture ------------ */
 $pic = $_SESSION['user_picture'] ?? null;
@@ -31,8 +40,9 @@ $picSrc = (!empty($pic) && is_file($imageDirFs . '/' . basename($pic)))
 /* ------------ 3) รับพารามิเตอร์ cat + q ------------ */
 function escape_like($s)
 {
-  return str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $s);
+  return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $s);
 }
+
 $q_raw  = trim($_GET['q'] ?? '');
 $q      = mb_substr($q_raw, 0, 80);
 $q_like = $q !== '' ? '%' . escape_like($q) . '%' : '';
@@ -124,7 +134,6 @@ $carry = array_filter([
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixora | Main</title>
   <link rel="stylesheet" href="../css/StyleMain4.css">
-
 </head>
 
 <body>
@@ -145,10 +154,15 @@ $carry = array_filter([
       </div>
 
       <div class="top-actions" aria-label="User actions">
-        <a href="product.php" class="icon-btn"></a>
-        <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
-        <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
-        </>
+        <a href="cart.php" class="icon-btn" title="Cart">
+          <img src="<?= $iconDirUrl ?>shopping-cart.png" alt="Cart">
+        </a>
+        <a href="#" class="icon-btn" title="Favorite">
+          <img src="<?= $iconDirUrl ?>favorite.png" alt="Favorite">
+        </a>
+        <a href="profile.php" class="icon-btn" title="Profile">
+          <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
+        </a>
       </div>
     </div>
   </header>
@@ -179,8 +193,9 @@ $carry = array_filter([
             <?php if ($resultFiltered && $resultFiltered->num_rows): ?>
               <?php while ($r = $resultFiltered->fetch_assoc()): ?>
                 <?php
-                $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-                $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+                $file = basename($r['product_path']);
+                $img  = $productDirUrl . rawurlencode($file);
+                $qs   = http_build_query($carry + ['id' => (int)$r['product_id']]);
                 ?>
                 <a class="card" href="product.php?<?= $qs ?>">
                   <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -198,8 +213,9 @@ $carry = array_filter([
           <div class="card-grid">
             <?php while ($r = $resultPop->fetch_assoc()): ?>
               <?php
-              $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-              $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+              $file = basename($r['product_path']);
+              $img  = $productDirUrl . rawurlencode($file);
+              $qs   = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
               <a class="card" href="product.php?<?= $qs ?>">
                 <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -214,8 +230,9 @@ $carry = array_filter([
           <div class="card-grid">
             <?php while ($r = $resultRnd->fetch_assoc()): ?>
               <?php
-              $img = $productDirUrl . rawurlencode(basename($r['product_path']));
-              $qs  = http_build_query($carry + ['id' => (int)$r['product_id']]);
+              $file = basename($r['product_path']);
+              $img  = $productDirUrl . rawurlencode($file);
+              $qs   = http_build_query($carry + ['id' => (int)$r['product_id']]);
               ?>
               <a class="card" href="product.php?<?= $qs ?>">
                 <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
