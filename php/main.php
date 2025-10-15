@@ -237,7 +237,7 @@ $carry = array_filter([
             Results for
             <?= $cat ? htmlspecialchars($cat) . ' ' : '' ?>
             <?= $q ? '“' . htmlspecialchars($q_raw) . '”' : '' ?>
-          </h2> 
+          </h2>
           <div class="card-grid">
             <?php if (!empty($resultFiltered) && $resultFiltered->num_rows): ?>
               <?php while ($r = $resultFiltered->fetch_assoc()): ?>
