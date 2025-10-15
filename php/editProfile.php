@@ -105,7 +105,7 @@ if (!empty($u_pic)) {
     <!-- NAVBAR -->
     <nav class="navbar">
         <a href="main.php" class="brand">
-            <h1>Picture Store</h1>
+            <h1>Pixora</h1>
         </a>
     </nav>
 
