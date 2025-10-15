@@ -43,10 +43,17 @@ $ins->bind_param('ssss', $name, $email, $phone, $hash);
 try {
   $ins->execute();
   $ins->close();
-  $_SESSION['success'] = 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ';
-  header('Location: Login.php'); exit();
+
+  echo "<script>
+    alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+    window.location.href = 'Login.php';
+  </script>";
+  exit; 
+
 } catch (mysqli_sql_exception $e) {
   $ins->close();
-  $_SESSION['error'] = 'DB error: '.$e->getMessage();
-  header('Location: register.html'); exit();
+  $_SESSION['error'] = 'DB error: ' . $e->getMessage();
+  header('Location: register.html');
+  exit();
 }
+?>
