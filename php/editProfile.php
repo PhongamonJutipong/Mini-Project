@@ -1,7 +1,6 @@
 <?php
-session_start(); 
+session_start();
 $db = mysqli_connect("localhost", "root", "", "picture_store");
-
 if (!$db) {
     die("Database connection failed: " . mysqli_connect_error());
 }
@@ -9,81 +8,145 @@ if (!$db) {
 if (!isset($_SESSION['user_id'])) {
     die("กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูล");
 }
+$user_id = (int)$_SESSION['user_id'];
 
-$user_id = $_SESSION['user_id']; // ✅ ดึง user_id จาก session
+/* ==== base URL ให้ตรงกับ main.php ==== */
+$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // เช่น /Mini Project
+if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
+$projectUrlBaseSafe = str_replace(' ', '%20', $projectUrlBase);
+
+/* ==== โฟลเดอร์รูปโปรไฟล์ (FS + URL) ==== */
+$uploadFsDir  = __DIR__ . '/image_user/';                    // {PROJECT}/php/image_user/
+$uploadUrlDir = $projectUrlBaseSafe . '/php/image_user/';    // /Mini%20Project/php/image_user/
+if (!is_dir($uploadFsDir)) {
+    @mkdir($uploadFsDir, 0777, true);
+}
+
+/* default avatar (ปรับ path ถ้าจำเป็น) */
+$defaultAvatar = $projectUrlBaseSafe . '/php/assets/default-avatar.png';
 
 if (isset($_POST['edit_profile'])) {
-    $user_name = $_POST['user_name'];
-    $user_email = $_POST['user_email'];
-    $user_tel = $_POST['user_tel'];
+    $user_name  = trim($_POST['user_name'] ?? '');
+    $user_email = trim($_POST['user_email'] ?? '');
+    $user_tel   = trim($_POST['user_tel'] ?? '');
 
-    // path ถูกต้องแน่ (กรณีอยู่ใน php/)
-    $targetDir = "../image_user/";
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+    $newFile = null;
+    if (!empty($_FILES['user_picture']['name']) && is_uploaded_file($_FILES['user_picture']['tmp_name'])) {
+        $origName = $_FILES['user_picture']['name'];
+        $tmpPath  = $_FILES['user_picture']['tmp_name'];
 
-    $filename = $_FILES['user_picture']['name'];
-    $tempname = $_FILES['user_picture']['tmp_name'];
-    $folder = $targetDir . basename($filename);
+        // ตรวจนามสกุล + ตั้งชื่อใหม่
+        $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($ext, $allowed, true)) {
+            echo "<script>alert('อนุญาตเฉพาะไฟล์ภาพ: jpg, jpeg, png, gif, webp');</script>";
+        } else {
+            $safeBase = preg_replace('~[^a-zA-Z0-9._-]+~', '-', pathinfo($origName, PATHINFO_FILENAME));
+            $newFile  = $safeBase . '-' . time() . '.' . $ext;
 
-    if (!empty($filename) && move_uploaded_file($tempname, $folder)) {
-        $sql = "UPDATE user 
-                SET user_name='$user_name',
-                    user_email='$user_email',
-                    user_tel='$user_tel',
-                    user_picture='$filename'
-                WHERE user_id=$user_id";
-    } else {
-        $sql = "UPDATE user 
-                SET user_name='$user_name',
-                    user_email='$user_email',
-                    user_tel='$user_tel'
-                WHERE user_id=$user_id";
+            if (!move_uploaded_file($tmpPath, $uploadFsDir . $newFile)) {
+                $newFile = null;
+                echo "<script>alert('อัปโหลดไฟล์ไม่สำเร็จ');</script>";
+            }
+        }
     }
 
-    if (mysqli_query($db, $sql)) {
-        echo "<script>alert('Profile updated successfully');</script>";
+    // UPDATE ด้วย prepared statement
+    if ($newFile) {
+        $stmt = $db->prepare("UPDATE user SET user_name=?, user_email=?, user_tel=?, user_picture=? WHERE user_id=?");
+        $stmt->bind_param("ssssi", $user_name, $user_email, $user_tel, $newFile, $user_id);
     } else {
-        echo "<script>alert('Database update failed: " . mysqli_error($db) . "');</script>";
+        $stmt = $db->prepare("UPDATE user SET user_name=?, user_email=?, user_tel=? WHERE user_id=?");
+        $stmt->bind_param("sssi", $user_name, $user_email, $user_tel, $user_id);
     }
+
+    if ($stmt && $stmt->execute()) {
+        if ($newFile) {
+            // อัปเดต session ให้ main.php เห็นรูปใหม่
+            $_SESSION['user_picture'] = $newFile;
+        }
+        // reload เดิมเพื่อกัน form-resubmit + refresh cache
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit;
+    } else {
+        echo "<script>alert('Database update failed');</script>";
+    }
+    if ($stmt) $stmt->close();
 }
 
-$result = mysqli_query($db, "SELECT * FROM user WHERE user_id=$user_id");
-if (!$result) {
-    die("Query failed: " . mysqli_error($db));
+/* ดึงข้อมูลผู้ใช้ */
+$stmt2 = $db->prepare("SELECT user_name, user_email, user_tel, user_picture FROM user WHERE user_id=?");
+$stmt2->bind_param("i", $user_id);
+$stmt2->execute();
+$stmt2->bind_result($u_name, $u_email, $u_tel, $u_pic);
+$stmt2->fetch();
+$stmt2->close();
+
+/* เตรียม URL รูป + cache-buster */
+$picUrl = $defaultAvatar;
+if (!empty($u_pic)) {
+    $fs = $uploadFsDir . basename($u_pic);
+    if (is_file($fs)) {
+        $picUrl = $uploadUrlDir . rawurlencode(basename($u_pic)) . '?v=' . filemtime($fs);
+    }
 }
-$user = mysqli_fetch_assoc($result);
 ?>
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
+
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/Style_Profile.css">
-    <title>Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/Style_Profile2.css">
+    <title>Edit Profile</title>
 </head>
+
 <body>
-    <h2>Profile</h2>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="main.php" class="brand">
+            <h1>Picture Store</h1>
+        </a>
+    </nav>
+
+    <!-- PROFILE CONTAINER -->
     <div class="profile-container">
-        <h3>Edit Profile</h3>
-        <form action="" method="post" enctype="multipart/form-data">
-            <img src="<?php echo '../image_user/' . $user['user_picture']; ?>" alt="Profile Picture" class="dp"><br><br>
+        <h2>Edit Profile</h2>
 
-            <label for="user_picture">Profile Image:</label>
-            <input type="file" id="user_picture" name="user_picture"><br><br>
+        <form action="editprofilesuccess.php" method="post" enctype="multipart/form-data">
+            <div class="profile-image-wrapper">
+                <img src="<?= htmlspecialchars($picUrl) ?>" alt="Profile Picture" class="dp"
+                    onerror="this.onerror=null; this.src='<?= htmlspecialchars($defaultAvatar) ?>'">
+            </div>
 
-            <label for="user_name">Username:</label>
-            <input type="text" id="user_name" name="user_name" value="<?php echo $user['user_name']; ?>" required><br><br>
+            <div class="form-group">
+                <label for="user_picture">Profile Image:</label>
+                <input type="file" id="user_picture" name="user_picture" accept=".jpg,.jpeg,.png,.gif,.webp">
+            </div>
 
-            <label for="user_email">Email:</label>
-            <input type="email" id="user_email" name="user_email" value="<?php echo $user['user_email']; ?>" required><br><br>
+            <div class="form-group">
+                <label for="user_name">Username:</label>
+                <input type="text" id="user_name" name="user_name" value="<?= htmlspecialchars($u_name) ?>" required>
+            </div>
 
-            <label for="user_tel">Phone Number:</label>
-            <input type="tel" id="user_tel" name="user_tel" value="<?php echo $user['user_tel']; ?>" required><br><br>
+            <div class="form-group">
+                <label for="user_email">Email:</label>
+                <input type="email" id="user_email" name="user_email" value="<?= htmlspecialchars($u_email) ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="user_tel">Phone Number:</label>
+                <input type="tel" id="user_tel" name="user_tel" value="<?= htmlspecialchars($u_tel) ?>" required>
+            </div>
 
             <button type="submit" name="edit_profile">Save Changes</button>
         </form>
     </div>
-</body>
-</html>
 
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2024 Picture Store. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

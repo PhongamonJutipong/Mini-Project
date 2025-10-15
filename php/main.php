@@ -205,7 +205,7 @@ $carry = array_filter([
           <img src="./picture and video/product.png" alt="product">
         </a>
 
-        <a href="profile.php" class="icon-btn" title="Profile">
+        <a href="editProfile.php" class="icon-btn" title="Profile">
           <img
             src="<?= htmlspecialchars($picSrc) ?>"
             alt="Profile" width="42" height="42"
