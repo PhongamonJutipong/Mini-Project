@@ -84,7 +84,7 @@
 
             <!-- Panel: ADMIN -->
             <section class="tab-panel hidden" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin">
-                <form action="LoginAdmin.php" method="post" class="login-form" novalidate>
+                <form action="LoginAdminsuccess.php" method="post" class="login-form" novalidate>
                     <label for="admin-username" class="sr-only">Admin Email</label>
                     <input
                         type="text"

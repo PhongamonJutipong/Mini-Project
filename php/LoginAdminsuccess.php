@@ -2,7 +2,7 @@
 session_start();
 require 'conn.php';
 
-if (isset($_POST['loginAdmin'])) {
+if (isset($_POST['login'])) {
     $email = trim($_POST['username']);
     $password = $_POST['password'];
 
@@ -30,7 +30,7 @@ if (isset($_POST['loginAdmin'])) {
             $_SESSION['admin_email'] = $user['admin_email'];
             $_SESSION['admin_profile'] = $user['admin_profile'];
 
-            header("Location: AdminmMain.php");
+            header("Location: AdminMain.php");
             exit();
         } 
         else {

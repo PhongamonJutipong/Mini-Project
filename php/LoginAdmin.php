@@ -22,7 +22,7 @@
 
   <div class="login-container">
     <div class="login-box">
-      <form action="LoginSuccess.php" method="post">
+      <form action="LoginAdminsuccess.php" method="post">
         <h2>ADMIN LOGIN</h2>
         <input type="text" id="username" placeholder="email" name="username" required>
         <input type="password" id="password" placeholder="password" name="password" required>
