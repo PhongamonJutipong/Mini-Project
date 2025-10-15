@@ -10,23 +10,23 @@ $imageDirFs    = $projectFsBase . '/php/image_user';
 $imageDirUrl   = $projectUrlBase . '/php/image_user/';
 $productDirFs  = $projectFsBase . '/php/image_product';
 $productDirUrl = $projectUrlBase . '/php/image_product/';
-$iconDirUrl    = $projectUrlBase . '/php/picture_and_video/';
+$iconDirUrl    = $projectUrlBase . './php/picture_and_video/';
 $defaultUrl    = $projectUrlBase . '/php/assets/default-avatar.png';
 
 /* 2) Profile pic (เหมือนก่อนหน้า) */
 $pic = $_SESSION['user_picture'] ?? null;
 if (!$pic && !empty($_SESSION['user_id'])) {
-    $stmt = $mysqli->prepare("SELECT user_picture FROM user WHERE user_id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $stmt->bind_result($pic);
-    $stmt->fetch();
-    $stmt->close();
-    if ($pic) $_SESSION['user_picture'] = $pic;
+  $stmt = $mysqli->prepare("SELECT user_picture FROM user WHERE user_id = ?");
+  $stmt->bind_param("i", $_SESSION['user_id']);
+  $stmt->execute();
+  $stmt->bind_result($pic);
+  $stmt->fetch();
+  $stmt->close();
+  if ($pic) $_SESSION['user_picture'] = $pic;
 }
 $picSrc = (!empty($pic) && is_file($imageDirFs . '/' . basename($pic)))
-    ? $imageDirUrl . rawurlencode(basename($pic))
-    : $defaultUrl;
+  ? $imageDirUrl . rawurlencode(basename($pic))
+  : $defaultUrl;
 
 /* 3) id + params for back */
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -37,8 +37,8 @@ $backUrl = 'main.php' . (empty($backParams) ? '' : ('?' . http_build_query($back
 
 /* 4) Load product */
 if ($id <= 0) {
-    http_response_code(400);
-    die('Bad request');
+  http_response_code(400);
+  die('Bad request');
 }
 $stmt = $mysqli->prepare("
   SELECT
@@ -57,36 +57,40 @@ $res = $stmt->get_result();
 $product = $res->fetch_assoc();
 $stmt->close();
 if (!$product) {
-    http_response_code(404);
-    die('Product not found');
+  http_response_code(404);
+  die('Product not found');
 }
 
 /* 5) Image */
 $fileSafe = basename($product['product_path'] ?? '');
 $imgFs    = $productDirFs . '/' . $fileSafe;
 $imgUrl   = is_file($imgFs)
-    ? $productDirUrl . rawurlencode($fileSafe)
-    : $projectUrlBase . '/assets/no-image.png';
+  ? $productDirUrl . rawurlencode($fileSafe)
+  : $projectUrlBase . '/assets/no-image.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($product['product_name']) ?> | Pixora</title>
-  <link rel="stylesheet" href="../css/StyleProduct.css">
+  <link rel="stylesheet" href="../css/StyleProduct2.css">
 </head>
+
 <body>
 
   <!-- Header: ให้เหมือนกับที่ส่งมาก่อนหน้า -->
   <header class="site-header">
     <div class="topnav">
-      <a href="main.php" class="brand" aria-label="Pixora Home"><h1>Pixora</h1></a>
+      <a href="main.php" class="brand" aria-label="Pixora Home">
+        <h1>Pixora</h1>
+      </a>
 
       <div class="search-container">
         <form class="search-box" method="get" action="main.php" role="search" aria-label="Site search">
           <?php if ($backCat): ?><input type="hidden" name="cat" value="<?= htmlspecialchars($backCat) ?>"><?php endif; ?>
-          <?php if ($backQ):   ?><input type="hidden" name="q"   value="<?= htmlspecialchars($backQ)   ?>"><?php endif; ?>
+          <?php if ($backQ):   ?><input type="hidden" name="q" value="<?= htmlspecialchars($backQ)   ?>"><?php endif; ?>
           <input type="text" class="search-input" name="q" placeholder="Search images..." value="">
           <button type="submit" class="search-btn">Search</button>
         </form>
@@ -94,13 +98,27 @@ $imgUrl   = is_file($imgFs)
 
       <div class="top-actions" aria-label="User actions">
         <a href="cart.php" class="icon-btn" title="Cart">
-          <img src="<?= htmlspecialchars($iconDirUrl) ?>shopping-cart.png" alt="Cart">
+          <img src="./picture and video/shopping-cart.png" alt="cart">
         </a>
-        <a href="#" class="icon-btn" title="Favorite">
-          <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="Fav">
+
+        <a href="addimage.php" class="icon-btn" title="Add image">
+          <img src="./picture and video/addimage.png" alt="add image">
         </a>
+
+        <a href="user_gallery.php" class="icon-btn" title="Gallery">
+          <img src="./picture and video/photo.png" alt="gallery">
+        </a>
+
+        <a href="user_product.php" class="icon-btn" title="product">
+          <img src="./picture and video/product.png" alt="product">
+        </a>
+
         <a href="profile.php" class="icon-btn" title="Profile">
-          <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
+          <img
+            src="<?= htmlspecialchars($picSrc) ?>"
+            alt="Profile" width="42" height="42"
+            style="border-radius:50%; object-fit:cover; border:2px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.12);"
+            onerror="this.onerror=null; this.src='<?= $defaultAvatar ?>';">
         </a>
       </div>
     </div>
@@ -168,4 +186,5 @@ $imgUrl   = is_file($imgFs)
     </section>
   </main>
 </body>
+
 </html>

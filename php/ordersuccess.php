@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// ✅ 1. ตรวจสอบว่าสินค้ามีในตะกร้าไหม
 $sql_cart = "
     SELECT cd.cart_detail_id, cd.product_id, cd.price_snap_shot, cd.sub_total, c.cart_id
     FROM cart_detail cd

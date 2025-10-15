@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>My Purchased Images</title>
-<link rel="stylesheet" href="../css/StyleUsergallery1.css">
+    <meta charset="UTF-8">
+    <title>My Purchased Images</title>
+    <link rel="stylesheet" href="../css/StyleUsergallery2.css">
 </head>
 
 <body>
-<?php
-require 'conn.php'; 
-session_start();
+    <?php
+    require 'conn.php';
+    session_start();
 
-$user_id = $_SESSION['user_id'] ?? ''; 
+    $user_id = $_SESSION['user_id'] ?? '';
 
-$sql = "
+    $sql = "
     SELECT 
         p.product_id,
         p.product_name,
@@ -28,31 +29,40 @@ $sql = "
     ORDER BY o.order_date DESC
 ";
 
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-?>
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    ?>
 
-<h2 style="text-align:center;">Gallery</h2>
-<div class="mainbox">
-    
-    <div class="gallery">
-        <?php
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo '<div class="img-box">';
-                echo '<img src="./image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
-                echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
-                echo '<small>สั่งซื้อเมื่อ: ' . htmlspecialchars($row["order_date"]) . '</small>';
-                echo '</div>';
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="brand">
+            <a href="main.php"><h1>Pixora</h1></a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="mainbox">
+        <h2>Gallery Purchased Images</h2>
+
+        <div class="gallery">
+            <?php
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo '<div class="img-box">';
+                    echo '<img src="./image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
+                    echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
+                    echo '<small>Order when: ' . htmlspecialchars($row["order_date"]) . '</small>';
+                    echo '</div>';
+                }
+            } else {
+                echo "<p>🛒 You have not purchased any images yet.</p>";
             }
-        } else {
-            echo "<p style='text-align:center;'>You didn't buy any picture!</p>";
-        }
-        ?>
+            ?>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>

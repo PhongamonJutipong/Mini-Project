@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Addimage</title>
-    <link rel="stylesheet" href="../css/StyleAddimg.css">
-</head>
-<body>
-    <?php
+<?php
 session_start();
 require 'conn.php';
 
@@ -17,43 +8,67 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (isset($_POST['upload'])) {
-    $title = $_POST['product_name'];
-    $description = $_POST['product_description'];
-    $price = $_POST['product_price'];
-    $category = $_POST['categories_name'];
+    $title = mysqli_real_escape_string($mysqli, $_POST['product_name']);
+    $description = mysqli_real_escape_string($mysqli, $_POST['product_description']);
+    $price = mysqli_real_escape_string($mysqli, $_POST['product_price']);
+    $category = mysqli_real_escape_string($mysqli, $_POST['categories_name']);
     $user_id = $_SESSION['user_id'];
 
-    $targetDir = "../image_product/";
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+    // ⭐ แก้ path ให้ตรงกับโฟลเดอร์จริง (เหมือนใน index.php)
+    $targetDir = __DIR__ . "/image_product/";  // อยู่ใน /php/image_product/
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
 
     $filename = basename($_FILES['product_path']['name']);
     $tempname = $_FILES['product_path']['tmp_name'];
     $targetFile = $targetDir . $filename;
 
-    if (move_uploaded_file($tempname, $targetFile)) {
+    // ตรวจสอบว่าเป็นไฟล์รูปจริงๆ
+    $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    if (!in_array($imageFileType, $allowedTypes)) {
+        echo "<script>alert('❌ Only JPG, JPEG, PNG, GIF & WEBP files are allowed!');</script>";
+    } elseif ($_FILES['product_path']['size'] > 5000000) { // 5MB
+        echo "<script>alert('❌ File is too large! Max 5MB');</script>";
+    } elseif (move_uploaded_file($tempname, $targetFile)) {
 
-        // INSERT ลง product
-        $sql_insert_product = "INSERT INTO product (creator_id, categories_name, product_name, product_description, product_path, product_price)
-                               VALUES ('$user_id', '$category', '$title', '$description', '$filename', '$price')";
-
-        if (mysqli_query($mysqli, $sql_insert_product)) {
-            $product_id = mysqli_insert_id($mysqli); // id ของ product ที่เพิ่ง insert
+        // ⭐ บันทึกเฉพาะชื่อไฟล์ (ไม่ใช่ path เต็ม)
+        $sql_insert_product = "INSERT INTO product (creator_id, categories_name, product_name, product_description, product_path, product_price, product_createat)
+                               VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        
+        $stmt = $mysqli->prepare($sql_insert_product);
+        $stmt->bind_param("issssd", $user_id, $category, $title, $description, $filename, $price);
+        
+        if ($stmt->execute()) {
+            $product_id = $stmt->insert_id;
 
             // INSERT ลง user_product
             $sql_user_product = "INSERT INTO user_product (up_iduser, up_idproduct) 
-                                 VALUES ('$user_id', '$product_id')";
-            if (mysqli_query($mysqli, $sql_user_product)) {
-                echo "<script>alert('✅ Uploaded successfully!');</script>";
+                                 VALUES (?, ?)";
+            $stmt2 = $mysqli->prepare($sql_user_product);
+            $stmt2->bind_param("ii", $user_id, $product_id);
+            
+            if ($stmt2->execute()) {
+                echo "<script>
+                    alert('✅ Uploaded successfully!');
+                </script>";
+                // ใช้ PHP redirect แทน JavaScript
+                header("Location: main.php");
+                exit();
             } else {
-                echo "<script>alert('❌ Failed to link user and product: " . mysqli_error($mysqli) . "');</script>";
+                echo "<script>alert('❌ Failed to link user and product: " . $stmt2->error . "');</script>";
             }
+            $stmt2->close();
 
         } else {
-            echo "<script>alert('❌ Failed to insert product: " . mysqli_error($mysqli) . "');</script>";
+            echo "<script>alert('❌ Failed to insert product: " . $stmt->error . "');</script>";
         }
+        $stmt->close();
 
     } else {
-        echo "<script>alert('❌ Upload Failed');</script>";
+        echo "<script>alert('❌ Upload Failed - Check folder permissions');</script>";
     }
 }
 ?>
@@ -62,13 +77,16 @@ if (isset($_POST['upload'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Image - Pixora</title>
-    <link rel="stylesheet" href="../css/Style_AddImage.css">
+    <link rel="stylesheet" href="../css/StyleAddimg2.css">
 </head>
 <body>
 <header>
     <nav class="navbar">
-        <h1>Pixora</h1>
+        <a href="main.php" class="brand" style="text-decoration: none;">
+            <h1>Pixora</h1>
+        </a>
     </nav>
 </header>
 
@@ -78,21 +96,22 @@ if (isset($_POST['upload'])) {
         <div class="form-group">
             <label>Image File:</label>
             <input type="file" name="product_path" accept="image/*" required>
+            <small>Max file size: 5MB (JPG, PNG, GIF, WEBP)</small>
         </div>
 
         <div class="form-group">
             <label>Title:</label>
-            <input type="text" name="product_name" placeholder="Enter image title" required>
+            <input type="text" name="product_name" placeholder="Enter image title" maxlength="200" required>
         </div>
 
         <div class="form-group">
             <label>Description:</label>
-            <textarea name="product_description" placeholder="Write a short description..." rows="4" required></textarea>
+            <textarea name="product_description" placeholder="Write a short description..." rows="4" maxlength="1000" required></textarea>
         </div>
 
         <div class="form-group">
             <label>Price (฿):</label>
-            <input type="number" name="product_price" min="0" step="0.01" required>
+            <input type="number" name="product_price" min="0" step="0.01" placeholder="0.00" required>
         </div>
 
         <div class="form-group">
