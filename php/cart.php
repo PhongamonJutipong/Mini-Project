@@ -65,7 +65,7 @@ $stmt->close();
     ?>
       <div class="cart-item">
         <div class="cart-thumb">
-          <img src="../uploads/<?= htmlspecialchars($item['product_path']) ?>" alt="ภาพสินค้า">
+          <img src="./image_product/<?= htmlspecialchars($item['product_path']) ?>" alt="ภาพสินค้า">
         </div>
         <div class="cart-info">
           <h3 class="cart-title"><?= htmlspecialchars($item['product_name']) ?></h3>
