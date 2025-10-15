@@ -59,7 +59,7 @@ $stmt->close();
   <section class="cart-container">
     <?php 
     $total = 0;
-    if (!empty($cart_items)): 
+    if (!empty($cart_items)):
       foreach ($cart_items as $item):
         $total += $item['sub_total'];
     ?>
