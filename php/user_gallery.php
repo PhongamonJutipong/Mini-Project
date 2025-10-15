@@ -42,7 +42,7 @@ $result = $stmt->get_result();
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 echo '<div class="img-box">';
-                echo '<img src="../image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
+                echo '<img src="./image_product/' . htmlspecialchars($row["product_path"]) . '" alt="' . htmlspecialchars($row["product_name"]) . '">';
                 echo '<h3>' . htmlspecialchars($row["product_name"]) . '</h3>';
                 echo '<small>สั่งซื้อเมื่อ: ' . htmlspecialchars($row["order_date"]) . '</small>';
                 echo '</div>';
