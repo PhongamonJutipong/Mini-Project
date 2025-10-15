@@ -123,7 +123,7 @@ $carry = array_filter([
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixora | Main</title>
-  <link rel="stylesheet" href="../css/StyleMain3.css">
+  <link rel="stylesheet" href="../css/StyleMain4.css">
 
 </head>
 
@@ -145,9 +145,10 @@ $carry = array_filter([
       </div>
 
       <div class="top-actions" aria-label="User actions">
-        < href="cart.php" class="icon-btn">eiei
+        <a href="product.php" class="icon-btn"></a>
         <img src="<?= htmlspecialchars($iconDirUrl) ?>favorite.png" alt="fav">
-        <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38"></>
+        <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile" width="38" height="38">
+        </>
       </div>
     </div>
   </header>
