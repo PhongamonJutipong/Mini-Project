@@ -39,7 +39,7 @@ $stmt->close();
 <head>
   <meta charset="UTF-8">
   <title>Pixora · My Cart</title>
-  <link rel="stylesheet" href="../css/StyleCart2.css">
+  <link rel="stylesheet" href="../css/StyleCart3.css">
 </head>
 
 <body>
@@ -54,7 +54,7 @@ $stmt->close();
   </header>
 
   <main class="container">
-    <h2 class="page-title">ตะกร้าสินค้าของฉัน</h2>
+    <h2 class="page-title">My Chart</h2>
 
     <section class="cart-container">
       <?php
@@ -70,13 +70,13 @@ $stmt->close();
             <div class="cart-info">
               <h3 class="cart-title"><?= htmlspecialchars($item['product_name']) ?></h3>
               <p class="cart-desc"><?= htmlspecialchars($item['product_description']) ?></p>
-              <p class="cart-price"><?= number_format($item['price_snap_shot'], 2) ?> บาท</p>
+              <p class="cart-price"><?= number_format($item['price_snap_shot'], 2) ?> BATH</p>
 
             </div>
             <div class="cart-actions">
               <form method="POST" action="delete_to_cart.php">
                 <input type="hidden" name="cart_detail_id" value="<?= $item['cart_detail_id'] ?>">
-                <button class="btn btn-danger">🗑 ลบ</button>
+                <button class="btn btn-danger">🗑 Delete</button>
               </form>
             </div>
           </div>
@@ -84,7 +84,7 @@ $stmt->close();
         endforeach;
         ?>
         <form method="POST" action="order.php">
-          <button class="btn btn-checkout">✅ ชำระเงิน</button>
+          <button class="btn btn-checkout">✅ Pay</button>
         </form>
       <?php endif;  ?>
     </section>

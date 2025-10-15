@@ -40,10 +40,10 @@ $result = $stmt->get_result();
   <!-- MAIN CONTENT -->
   <main class="container">
     <div class="page-header">
-      <h2 class="page-title">📷 สินค้าที่ฉันลงขาย</h2>
+      <h2 class="page-title">📷 Products for Sale</h2>
       <div class="header-actions">
-        <a href="addimage.php" class="btn btn-add">➕ เพิ่มสินค้าใหม่</a>
-        <a href="main.php" class="btn btn-back">🏠 กลับหน้าแรก</a>
+        <a href="addimage.php" class="btn btn-add">➕ Add new products</a>
+        <a href="main.php" class="btn btn-back">🏠 Return to home page</a>
       </div>
     </div>
 
@@ -51,12 +51,12 @@ $result = $stmt->get_result();
       <table class="product-table">
         <thead>
           <tr>
-            <th>รูปภาพ</th>
-            <th>ชื่อสินค้า</th>
-            <th>หมวดหมู่</th>
-            <th>ราคา</th>
-            <th>สถานะ</th>
-            <th>วันที่เพิ่ม</th>
+            <th>picture</th>
+            <th>Product name</th>
+            <th>Category</th>
+            <th>price</th>
+            <th>status</th>
+            <th>Date added</th>
           </tr>
         </thead>
         <tbody>
@@ -71,7 +71,7 @@ $result = $stmt->get_result();
                 <td class="price-cell">฿<?= number_format($row['product_price'], 2) ?></td>
                 <td>
                   <span class="status <?= strtolower($row['product_status'] ?? 'pending') ?>">
-                    <?= $row['product_status'] ? htmlspecialchars($row['product_status']) : 'รอตรวจสอบ' ?>
+                    <?= $row['product_status'] ? htmlspecialchars($row['product_status']) : 'Waiting to check' ?>
                   </span>
                 </td>
                 <td class="date-cell"><?= htmlspecialchars($row['product_createat']) ?></td>
@@ -81,8 +81,8 @@ $result = $stmt->get_result();
             <tr>
               <td colspan="6" class="empty">
                 <div class="empty-state">
-                  <p>🖼️ คุณยังไม่ได้เพิ่มสินค้าเลย</p>
-                  <a href="addimage.php" class="btn btn-add">เริ่มเพิ่มสินค้าตอนนี้</a>
+                  <p>🖼️ You haven't added any products yet.</p>
+                  <a href="addimage.php" class="btn btn-add">Start adding products now.</a>
                 </div>
               </td>
             </tr>

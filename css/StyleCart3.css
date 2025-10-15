@@ -145,7 +145,7 @@ body::before {
 }
 
 .cart-title::before {
-  content: '📦 ชื่อสินค้า';
+  content: '📦 Name Product';
   position: absolute;
   top: 0;
   left: 0;
@@ -169,7 +169,7 @@ body::before {
 }
 
 .cart-desc::before {
-  content: '📝 รายละเอียดสินค้า';
+  content: '📝 Product Detail';
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
@@ -196,7 +196,7 @@ body::before {
 }
 
 .cart-price::before {
-  content: '💰 ราคา';
+  content: '💰 Price';
   position: absolute;
   top: 0.75rem;
   left: 1.25rem;
