@@ -27,7 +27,7 @@
         </header>
 
         <video autoplay muted loop playsinline class="video-bg">
-            <source src="../picture and video/video3.mp4" type="video/mp4">
+            <source src="./picture and video/video3.mp4" type="video/mp4">
         </video>
 
         <div class="video-back">

@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
         </a>
         <div class="top-actions">
             <span class="badge">Admin</span>
-            <img src="user.png" alt="Admin profile" />
         </div>
     </div>
 </header>
@@ -93,7 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
 
                 <div class="field">
                     <label>Profile Picture</label><br>
-                    <img src="../uploads/<?= htmlspecialchars($user['user_picture']) ?>" alt="Profile" width="100"><br><br>
+                    <img src="./image_user/<?= htmlspecialchars($user['user_picture']) ?>" alt="Profile" width="100">
+                    <br><br>
                     <input type="file" name="user_picture" accept="image/*">
                 </div>
 
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
                     <?php foreach ($posts as $post): ?>
                     <article class="post">
                         <div class="post-thumb">
-                            <img src="../uploads/<?= htmlspecialchars($post['product_path']) ?>" alt="Post thumbnail" />
+                            <img src="./image_product/<?= htmlspecialchars($post['product_path']) ?>" alt="Post thumbnail" />
                         </div>
                         <div class="post-body">
                             <h3 class="post-title"><?= htmlspecialchars($post['product_name']) ?></h3>
