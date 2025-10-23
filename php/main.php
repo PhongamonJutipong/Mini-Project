@@ -3,14 +3,14 @@ session_start();
 require __DIR__ . '/conn.php';
 
 /* ------------ path main ------------ */
-$projectFsBase  = dirname(__DIR__);                          
-$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); 
+$projectFsBase  = dirname(__DIR__);
+$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
 $projectUrlBase     = rtrim($projectUrlBase, '/');
 $projectUrlBaseSafe = str_replace(' ', '%20', $projectUrlBase);
 $imageDirFs   = __DIR__ . '/image_user';
 $productDirFs = __DIR__ . '/image_product';
-$iconDirFs    = __DIR__ . '/picture_and_video';             
+$iconDirFs    = __DIR__ . '/picture_and_video';
 $assetsDirFs  = __DIR__ . '/assets';
 $imageDirUrl   = $projectUrlBaseSafe . '/php/image_user/';
 $productDirUrl = $projectUrlBaseSafe . '/php/image_product/';
@@ -204,13 +204,37 @@ $carry = array_filter([
           <img src="./picture and video/product.png" alt="product">
         </a>
 
-        <a href="editProfile.php" class="icon-btn" title="Profile">
-          <img
-            src="<?= htmlspecialchars($picSrc) ?>"
-            alt="Profile" width="42" height="42"
-            style="border-radius:50%; object-fit:cover; border:2px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.12);"
-            onerror="this.onerror=null; this.src='<?= $defaultAvatar ?>';">
-        </a>
+        <!-- Profile Dropdown -->
+        <div class="profile-dropdown">
+          <div class="icon-btn profile-toggle" title="Profile">
+            <img
+              src="<?= htmlspecialchars($picSrc) ?>"
+              alt="Profile" width="42" height="42"
+              style="border-radius:50%; object-fit:cover; border:2px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.12);"
+              onerror="this.onerror=null; this.src='<?= $defaultAvatar ?>';">
+          </div>
+
+          <div class="dropdown-menu">
+            <ul>
+              <li>
+                <a href="editProfile.php">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile Settings
+                </a>
+              </li>
+              <li>
+                <a href="logout.php" class="logout-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -235,7 +259,7 @@ $carry = array_filter([
           <h2>
             Results for
             <?= $cat ? htmlspecialchars($cat) . ' ' : '' ?>
-            <?= $q ? '“' . htmlspecialchars($q_raw) . '”' : '' ?>
+            <?= $q ? '"' . htmlspecialchars($q_raw) . '"' : '' ?>
           </h2>
           <div class="card-grid">
             <?php if (!empty($resultFiltered) && $resultFiltered->num_rows): ?>
@@ -243,7 +267,7 @@ $carry = array_filter([
                 <?php
                 $file = basename($r['product_path']);
                 $img  = $productDirUrl . rawurlencode($file);
-                $qs   = http_build_query(array_merge($carry, ['id' => (int)$r['product_id']])); // ใช้ array_merge
+                $qs   = http_build_query(array_merge($carry, ['id' => (int)$r['product_id']]));
                 ?>
                 <a class="card" href="product.php?<?= $qs ?>">
                   <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($r['product_name']) ?>">
@@ -300,6 +324,28 @@ $carry = array_filter([
       <?php endif; ?>
     </div>
   </main>
+
+  <!-- JavaScript สำหรับ Toggle Dropdown -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      const profileToggle = document.querySelector('.profile-toggle');
+
+      if (profileToggle) {
+        profileToggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('active');
+        });
+      }
+
+      // ปิด dropdown เมื่อคลิกข้างนอก
+      document.addEventListener('click', function(e) {
+        if (!profileDropdown.contains(e.target)) {
+          profileDropdown.classList.remove('active');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
