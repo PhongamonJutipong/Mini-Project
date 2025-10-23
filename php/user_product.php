@@ -92,11 +92,6 @@ $result = $stmt->get_result();
     </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <p>© 2025 Pixora. All rights reserved.</p>
-  </footer>
-
 </body>
 
 </html>

@@ -129,9 +129,5 @@ if (isset($_POST['upload'])) {
         <button type="submit" name="upload" class="upload-btn">Upload Image</button>
     </form>
 </section>
-
-<footer>
-    <p>© 2025 Pixora. All rights reserved.</p>
-</footer>
 </body>
 </html>
