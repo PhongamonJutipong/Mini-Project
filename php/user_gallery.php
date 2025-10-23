@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Purchased Images</title>
-    <link rel="stylesheet" href="../css/StyleUsergallery2.css">
+    <link rel="stylesheet" href="../css/StyleUsergallery3.css">
 </head>
 
 <body>

@@ -2,18 +2,16 @@
 session_start();
 require __DIR__ . '/conn.php';
 
-/* ------------ 1) Base paths (normalize + safe) ------------ */
-$projectFsBase  = dirname(__DIR__);                          // C:\xampp\htdocs\Mini Project
-$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // /Mini Project หรือ ''
+/* ------------ path main ------------ */
+$projectFsBase  = dirname(__DIR__);                          
+$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); 
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
 $projectUrlBase     = rtrim($projectUrlBase, '/');
 $projectUrlBaseSafe = str_replace(' ', '%20', $projectUrlBase);
-
 $imageDirFs   = __DIR__ . '/image_user';
 $productDirFs = __DIR__ . '/image_product';
-$iconDirFs    = __DIR__ . '/picture_and_video';              // <-- แก้จาก "./picture and video"
+$iconDirFs    = __DIR__ . '/picture_and_video';             
 $assetsDirFs  = __DIR__ . '/assets';
-
 $imageDirUrl   = $projectUrlBaseSafe . '/php/image_user/';
 $productDirUrl = $projectUrlBaseSafe . '/php/image_product/';
 $iconDirUrl    = $projectUrlBaseSafe . '/php/picture_and_video/';
@@ -34,6 +32,7 @@ function buildUrl(array $params = []): string
   $self = $_SERVER['PHP_SELF'];
   return htmlspecialchars($self . (empty($params) ? '' : ('?' . http_build_query($params))));
 }
+
 /* สร้าง src แบบตรวจไฟล์ + กันแคช */
 function build_asset_src(string $fsDir, string $urlDir, string $filename, ?string $fallback = null): string
 {
@@ -168,7 +167,7 @@ $carry = array_filter([
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixora | Main</title>
-  <link rel="stylesheet" href="../css/StyleMain4.css">
+  <link rel="stylesheet" href="../css/StyleMain5.css">
 </head>
 
 <body>

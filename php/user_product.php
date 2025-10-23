@@ -25,7 +25,7 @@ $result = $stmt->get_result();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Products | Pixora</title>
-  <link rel="stylesheet" href="../css/StyleUserProduct2.css">
+  <link rel="stylesheet" href="../css/StyleUserProduct3.css">
 </head>
 
 <body>
@@ -33,7 +33,7 @@ $result = $stmt->get_result();
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="brand">
-      <h1>Pixora</h1>
+      <a href="main.php"><h1>Pixora</h1></a>
     </div>
   </nav>
 

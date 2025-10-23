@@ -39,17 +39,13 @@ $stmt->close();
 <head>
   <meta charset="UTF-8">
   <title>Pixora · My Cart</title>
-  <link rel="stylesheet" href="../css/StyleCart3.css">
+  <link rel="stylesheet" href="../css/StyleCart4.css">
 </head>
 
 <body>
   <header class="site-header">
     <div class="topnav">
-      <h1>Pixora</h1>
-      <div class="top-actions">
-        <a href="gallery.php" class="btn-link">🏠 Gallery</a>
-        <a href="logout.php" class="btn-link logout">🚪 Logout</a>
-      </div>
+      <a href="main.php"><h1>Pixora</h1></a>
     </div>
   </header>
 

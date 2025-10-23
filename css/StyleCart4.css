@@ -29,6 +29,10 @@ body::before {
   z-index: 0;
 }
 
+a{
+  text-decoration: none;
+}
+
 /* NAVBAR */
 .site-header {
   background-color: rgba(255, 255, 255, 0.98);
@@ -40,9 +44,8 @@ body::before {
 
 .topnav {
   display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 1rem 2rem;
+  cursor: pointer;
 }
 
 .topnav h1 {

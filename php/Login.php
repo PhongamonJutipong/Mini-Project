@@ -12,12 +12,6 @@
     <!-- NAVBAR: สไตล์เดิม -->
     <nav class="navbar">
         <h1>Pixora</h1>
-        <div class="nav-3">
-            <a href="index.php">Home</a>
-        </div>
-        <div class="nav-2">
-            <a href="register.php">Register</a>
-        </div>
     </nav>
 
     <!-- LOGIN PANEL: มีแท็บ User / Admin -->
@@ -94,7 +88,6 @@
                         autocomplete="username"
                         placeholder="Admin Email"
                         required />
-
                     <div class="password-field">
                         <label for="admin-password" class="sr-only">Admin Password</label>
                         <input
