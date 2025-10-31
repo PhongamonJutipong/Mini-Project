@@ -13,30 +13,30 @@
     <?php
     require 'conn.php';
 
-    // ถ้ามีการค้นหา user
+    // When searching for a user
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
         $user_id = mysqli_real_escape_string($mysqli, $_POST['user_id']);
 
-        // ดึงข้อมูลผู้ใช้
+        // Retrieve user data
         $sql_user = "SELECT user_id, user_name, user_email, user_tel, user_picture 
-                 FROM user 
-                 WHERE user_id = '$user_id'";
+                     FROM user 
+                     WHERE user_id = '$user_id'";
         $result_user = mysqli_query($mysqli, $sql_user);
 
         if (mysqli_num_rows($result_user) > 0) {
             $user = mysqli_fetch_assoc($result_user);
 
-            // ดึงโพสต์ของผู้ใช้นั้น
+            // Retrieve user's posts
             $sql_posts = "SELECT product_id, product_name, product_description, 
-                             product_path, product_price, product_createat 
-                      FROM product 
-                      WHERE creator_id = '$user_id'";
+                                 product_path, product_price, product_createat 
+                          FROM product 
+                          WHERE creator_id = '$user_id'";
             $result_posts = mysqli_query($mysqli, $sql_posts);
             $posts = mysqli_fetch_all($result_posts, MYSQLI_ASSOC);
         } else {
             $user = null;
             $posts = [];
-            echo "<script>alert('ไม่พบผู้ใช้ในระบบ');</script>";
+            echo "<script>alert('No user found in the system.');</script>";
         }
     }
     ?>
@@ -50,7 +50,6 @@
             <a href="logout.php" class="logout-link">
                 Logout
             </a>
-
         </div>
     </header>
 
@@ -60,10 +59,10 @@
             <form class="row" method="POST">
                 <div class="field">
                     <label for="uid">User ID</label>
-                    <input id="uid" name="user_id" type="text" placeholder="เช่น 1, 2, 3" required />
-                    <p class="hint">กรอก User ID ของผู้ใช้เพื่อค้นหา</p>
+                    <input id="uid" name="user_id" type="text" placeholder="e.g., 1, 2, 3" required />
+                    <p class="hint">Enter the user's ID to fetch their information.</p>
                 </div>
-                <button type="submit" class="btn">Fetch User</button>
+                <button type="submit" class="btn">Search User</button>
             </form>
         </section>
 
@@ -80,7 +79,7 @@
                         <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
 
                         <div class="field">
-                            <label>Full name</label>
+                            <label>Full Name</label>
                             <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']) ?>" required />
                         </div>
 
@@ -90,7 +89,7 @@
                         </div>
 
                         <div class="field">
-                            <label>Phone</label>
+                            <label>Phone Number</label>
                             <input type="text" name="user_tel" value="<?= htmlspecialchars($user['user_tel']) ?>" required />
                         </div>
 
@@ -123,16 +122,16 @@
                                         <h3 class="post-title"><?= htmlspecialchars($post['product_name']) ?></h3>
                                         <p class="post-meta">ID: <?= $post['product_id'] ?> · <?= $post['product_createat'] ?></p>
                                         <p class="post-desc"><?= htmlspecialchars($post['product_description']) ?></p>
-                                        <p class="post-price">💰 <?= $post['product_price'] ?> บาท</p>
-                                        <form method="POST" action="AdminDeletePost.php" onsubmit="return confirm('ลบโพสต์นี้แน่หรือไม่?');">
+                                        <p class="post-price">💰 <?= $post['product_price'] ?> THB</p>
+                                        <form method="POST" action="AdminDeletePost.php" onsubmit="return confirm('Are you sure you want to delete this post?');">
                                             <input type="hidden" name="product_id" value="<?= $post['product_id'] ?>">
-                                            <button type="submit" class="btn btn-danger">🗑 ลบโพสต์</button>
+                                            <button type="submit" class="btn btn-danger">🗑 Delete Post</button>
                                         </form>
                                     </div>
                                 </article>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <p>ไม่มีโพสต์ของผู้ใช้นี้</p>
+                            <p>This user has no posts.</p>
                         <?php endif; ?>
                     </div>
                 </div>

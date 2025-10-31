@@ -4,18 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>สมัครสมาชิก</title>
-    <link rel="stylesheet" href="..//css//StyleRegister.css">
+    <link rel="stylesheet" href="../css/StyleRegister.css">
 
     <script>
         function validateForm(event) {
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm_password").value;
             const checkbox = document.getElementById("terms_checkbox");
+            
             if (password !== confirmPassword) {
                 alert("Passwords do not match. Please try again.");
                 event.preventDefault();
                 return false;
             }
+            
             if (!checkbox.checked) {
                 alert("Please accept the Terms and Conditions and Privacy Policy before registering.");
                 event.preventDefault();
@@ -51,7 +53,8 @@
                 Accept <a href="term.php" target="_blank">Terms and Conditions</a> and
                 <a href="privacy.php" target="_blank">Privacy Policy</a>
             </label>
-            <br><br>
+            <br>
+            <br>
 
             <button type="submit">Register</button>
 

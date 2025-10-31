@@ -9,6 +9,15 @@
 </head>
 
 <body>
+    <!-- แสดง error alert ถ้ามี -->
+    <?php
+    session_start();
+    if (isset($_SESSION['login_error'])) {
+        echo "<script>alert('" . addslashes($_SESSION['login_error']) . "');</script>";
+        unset($_SESSION['login_error']);
+    }
+    ?>
+
     <!-- NAVBAR: สไตล์เดิม -->
     <nav class="navbar">
         <h1>Pixora</h1>
@@ -147,4 +156,4 @@
     </script>
 </body>
 
-</html>`
+</html>

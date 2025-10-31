@@ -6,12 +6,12 @@ if (!$db) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    die("กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูล");
+    die("Please sign in before editing your profile.");
 }
 $user_id = (int)$_SESSION['user_id'];
 
 /* ==== base URL ให้ตรงกับ main.php ==== */
-$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // เช่น /Mini Project
+$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME'])); // e.g., /Mini Project
 if ($projectUrlBase === DIRECTORY_SEPARATOR) $projectUrlBase = '';
 $projectUrlBaseSafe = str_replace(' ', '%20', $projectUrlBase);
 
@@ -35,23 +35,23 @@ if (isset($_POST['edit_profile'])) {
         $origName = $_FILES['user_picture']['name'];
         $tmpPath  = $_FILES['user_picture']['tmp_name'];
 
-        // ตรวจนามสกุล + ตั้งชื่อใหม่
+        // Validate extension + generate a new filename
         $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         if (!in_array($ext, $allowed, true)) {
-            echo "<script>alert('อนุญาตเฉพาะไฟล์ภาพ: jpg, jpeg, png, gif, webp');</script>";
+            echo "<script>alert('Only image files are allowed: jpg, jpeg, png, gif, webp.');</script>";
         } else {
             $safeBase = preg_replace('~[^a-zA-Z0-9._-]+~', '-', pathinfo($origName, PATHINFO_FILENAME));
             $newFile  = $safeBase . '-' . time() . '.' . $ext;
 
             if (!move_uploaded_file($tmpPath, $uploadFsDir . $newFile)) {
                 $newFile = null;
-                echo "<script>alert('อัปโหลดไฟล์ไม่สำเร็จ');</script>";
+                echo "<script>alert('File upload failed.');</script>";
             }
         }
     }
 
-    // UPDATE ด้วย prepared statement
+    // UPDATE with prepared statement
     if ($newFile) {
         $stmt = $db->prepare("UPDATE user SET user_name=?, user_email=?, user_tel=?, user_picture=? WHERE user_id=?");
         $stmt->bind_param("ssssi", $user_name, $user_email, $user_tel, $newFile, $user_id);
@@ -62,19 +62,19 @@ if (isset($_POST['edit_profile'])) {
 
     if ($stmt && $stmt->execute()) {
         if ($newFile) {
-            // อัปเดต session ให้ main.php เห็นรูปใหม่
+            // Update session so main.php sees the new picture
             $_SESSION['user_picture'] = $newFile;
         }
-        // reload เดิมเพื่อกัน form-resubmit + refresh cache
+        // Reload to prevent form resubmission + refresh cache
         header("Location: " . $_SERVER['REQUEST_URI']);
         exit;
     } else {
-        echo "<script>alert('Database update failed');</script>";
+        echo "<script>alert('Database update failed. Please try again later.');</script>";
     }
     if ($stmt) $stmt->close();
 }
 
-/* ดึงข้อมูลผู้ใช้ */
+/* Fetch user data */
 $stmt2 = $db->prepare("SELECT user_name, user_email, user_tel, user_picture FROM user WHERE user_id=?");
 $stmt2->bind_param("i", $user_id);
 $stmt2->execute();
@@ -82,7 +82,7 @@ $stmt2->bind_result($u_name, $u_email, $u_tel, $u_pic);
 $stmt2->fetch();
 $stmt2->close();
 
-/* เตรียม URL รูป + cache-buster */
+/* Prepare picture URL + cache-buster */
 $picUrl = $defaultAvatar;
 if (!empty($u_pic)) {
     $fs = $uploadFsDir . basename($u_pic);
@@ -92,7 +92,7 @@ if (!empty($u_pic)) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en"> <!-- เปลี่ยนเป็น en ให้สอดคล้องกับข้อความ -->
 
 <head>
     <meta charset="UTF-8">
@@ -142,11 +142,6 @@ if (!empty($u_pic)) {
             <button type="submit" name="edit_profile">Save Changes</button>
         </form>
     </div>
-
-    <!-- FOOTER -->
-    <footer>
-        <p>&copy; 2024 Picture Store. All rights reserved.</p>
-    </footer>
 </body>
 
 </html>

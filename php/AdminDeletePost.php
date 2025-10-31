@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
 
     $sql2 = "DELETE FROM product WHERE product_id = '$id'";
     if (mysqli_query($mysqli, $sql2)) {
-        echo "<script>alert('ลบโพสต์เรียบร้อย');</script>";
+        echo "<script>alert('The post has been successfully deleted.');</script>";
     } else {
-        echo "<script>alert('ลบไม่สำเร็จ: " . mysqli_error($mysqli) . "');</script>";
+        echo "<script>alert('Failed to delete the post: " . mysqli_error($mysqli) . "');</script>";
     }
 }
 ?>
