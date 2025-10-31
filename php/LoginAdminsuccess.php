@@ -44,14 +44,14 @@ if (isset($_POST['login'])) {
         } 
         else {
             echo "<script>
-                alert('Incorrect password. Please try again.');
+                alert('incorrect. Please check your email or password.');
                 window.history.back();
             </script>";
             exit();
         }
     } else {
         echo "<script>
-            alert('Admin account not found. Please check your email.');
+            alert('incorrect. Please check your email or password.');
             window.history.back();
         </script>";
         exit();

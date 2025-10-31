@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pixora | Login</title>
-    <link rel="stylesheet" href="../css/StyleLogin.css">
+    <link rel="stylesheet" href="../css/StyleLogin2.css">
 </head>
 
 <body>
@@ -20,9 +20,10 @@
 
     <!-- NAVBAR: สไตล์เดิม -->
     <nav class="navbar">
+    <a href="index.php" style="text-decoration:none; padding:0; margin:0;">
         <h1>Pixora</h1>
-    </nav>
-
+    </a>
+</nav>
     <!-- LOGIN PANEL: มีแท็บ User / Admin -->
     <div class="login-container">
         <div class="login-box">
@@ -73,7 +74,6 @@
                             <input type="checkbox" name="remember" value="1" />
                             <span>Remember me</span>
                         </label>
-                        <a href="forgot.php" class="forgot">Forgot password?</a>
                     </div>
 
                     <button type="submit" name="login" class="login-btn">Login</button>
