@@ -75,7 +75,7 @@ $imgUrl   = is_file($imgFs)
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($product['product_name']) ?> | Pixora</title>
-  <link rel="stylesheet" href="../css/StyleProduct2.css">
+  <link rel="stylesheet" href="../css/StyleProduct3.css">
 </head>
 
 <body>
@@ -113,7 +113,7 @@ $imgUrl   = is_file($imgFs)
           <img src="./picture and video/product.png" alt="product">
         </a>
 
-        <a href="profile.php" class="icon-btn" title="Profile">
+        <a href="editProfile.php" class="icon-btn" title="Profile">
           <img
             src="<?= htmlspecialchars($picSrc) ?>"
             alt="Profile" width="42" height="42"

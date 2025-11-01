@@ -23,8 +23,6 @@ body {
   z-index: 1000;
 }
 
-
-
 .topnav {
   display: grid;
   grid-template-columns: 200px 1fr 300px;

@@ -2,195 +2,77 @@
 session_start();
 require __DIR__ . '/conn.php';
 
-// ==================== ตั้งค่า Path และ URL ====================
-$projectUrlBase = dirname(dirname($_SERVER['SCRIPT_NAME']));
-if ($projectUrlBase === DIRECTORY_SEPARATOR) {
-  $projectUrlBase = '';
+// Path
+$base = dirname(dirname($_SERVER['SCRIPT_NAME']));
+$base = ($base === '/') ? '' : rtrim($base, '/');
+$imgUrl = $base . '/php/image_user/';
+$prodUrl = $base . '/php/image_product/';
+
+// รูปโปรไฟล์
+$pic = $_SESSION['user_picture'] ?? null;
+if (!$pic && $uid = (int)$_SESSION['user_id']) {
+  $row = $mysqli->query("SELECT user_picture FROM user WHERE user_id = $uid")->fetch_assoc();
+  $pic = $_SESSION['user_picture'] = $row['user_picture'] ?? null;
 }
-$projectUrlBase = rtrim($projectUrlBase, '/');
-$projectUrlBase = str_replace(' ', '%20', $projectUrlBase);
-$imageDirFs = __DIR__ . '/image_user';
-$productDirFs = __DIR__ . '/image_product';
-$iconDirFs = __DIR__ . '/picture_and_video';
-$assetsDirFs = __DIR__ . '/assets';
-$imageDirUrl = $projectUrlBase . '/php/image_user/';
-$productDirUrl = $projectUrlBase . '/php/image_product/';
-$iconDirUrl = $projectUrlBase . '/php/picture_and_video/';
-$assetsDirUrl = $projectUrlBase . '/php/assets/';
+$picSrc = $pic ? (strpos($pic, 'http') === 0 ? $pic : $imgUrl . basename($pic)) : $base . '/php/image_user/account.png';
 
-// ==================== ฟังก์ชันช่วย ====================
-function buildAssetSrc($fsDir, $urlDir, $filename, $fallback = null)
-{
-  $fs = rtrim($fsDir, '/\\') . '/' . $filename;
-  if (is_file($fs)) {
-    return $urlDir . rawurlencode($filename) . '?v=' . filemtime($fs);
-  }
-  if ($fallback) {
-    return $fallback;
-  }
-  return $urlDir . rawurlencode($filename);
-}
+// รับค่าจาก URL
+$q = $_GET['q'] ?? '';
+$cat = $_GET['cat'] ?? '';
 
-function activeAttr($currentCat, $label)
-{
-  if ($label === 'ALL') {
-    $isActive = empty($currentCat);
-  } else {
-    $isActive = ($currentCat === $label);
-  }
-  if ($isActive) {
-    return ' aria-current="page" class="active"';
-  }
-  return '';
-}
-
-function buildUrl($params = array())
-{
-  $self = $_SERVER['PHP_SELF'];
-  if (empty($params)) {
-    return htmlspecialchars($self);
-  }
-  return htmlspecialchars($self . '?' . http_build_query($params));
-}
-
-// ==================== รูปโปรไฟล์ ====================
-$defaultAvatar = buildAssetSrc(
-  $assetsDirFs,
-  $assetsDirUrl,
-  'default-avatar.png',
-  buildAssetSrc($iconDirFs, $iconDirUrl, 'IMG_logo.jpg', $assetsDirUrl . 'default-avatar.png')
-);
-
-$pic = null;
-if (isset($_SESSION['user_picture'])) {
-  $pic = $_SESSION['user_picture'];
-}
-
-if (!$pic && !empty($_SESSION['user_id'])) {
-  $stmt = $mysqli->prepare("SELECT user_picture FROM user WHERE user_id = ?");
-  $stmt->bind_param("i", $_SESSION['user_id']);
-  $stmt->execute();
-  $stmt->bind_result($pic);
-  $stmt->fetch();
-  $stmt->close();
-  if ($pic) {
-    $_SESSION['user_picture'] = $pic;
-  }
-}
-
-$picSrc = $defaultAvatar;
-if (!empty($pic)) {
-  if (preg_match('~^https?://~i', $pic)) {
-    $picSrc = htmlspecialchars($pic);
-  } else {
-    $bn = basename($pic);
-    $picSrc = buildAssetSrc($imageDirFs, $imageDirUrl, $bn, $defaultAvatar);
-  }
-}
-
-// ==================== รับค่าจาก URL ====================
-$q = '';
-if (isset($_GET['q'])) {
-  $q = trim($_GET['q']);
-  $q = mb_substr($q, 0, 80);
-}
-
-$allowedCats = array(
-  'Art & Design',
-  'Health & Fitness',
-  'Technology & Business',
-  'Travel & Adventure',
-  'Food & Drink'
-);
-
-$cat = '';
-if (isset($_GET['cat'])) {
-  $catInput = trim($_GET['cat']);
-  if (in_array($catInput, $allowedCats, true)) {
-    $cat = $catInput;
-  }
-}
-
-// ==================== สร้าง Query สำหรับค้นหา ====================
-$filters = array();
-$params = array();
+// Query
+$sql = "SELECT product_id, product_name, product_path FROM product WHERE 1=1";
+$params = [];
 $types = '';
 
-if ($cat !== '') {
-  $filters[] = "categories_name = ?";
+//เลือกหมวดหมู่
+if ($cat) {
+  $sql .= " AND categories_name = ?";
   $params[] = $cat;
   $types .= 's';
 }
 
-if ($q !== '') {
-  $qLike = str_replace(array('\\', '%', '_'), array('\\\\', '\\%', '\\_'), $q);
-  $qLike = '%' . $qLike . '%';
-  $filters[] = "product_name LIKE ?";
-  $params[] = $qLike;
+//ถ้ามีการค้นหา
+if ($q) {
+  $sql .= " AND product_name LIKE ?";
+  $params[] = "%$q%";
   $types .= 's';
 }
 
-$resultFiltered = null;
-$resultPop = null;
-$resultRnd = null;
-
-// ถ้ามีการค้นหาหรือเลือก category
-if (count($filters) > 0) {
-  $sql = "SELECT product_id, product_name, product_path FROM product WHERE "
-    . implode(' AND ', $filters) . " ORDER BY product_createat DESC LIMIT 24";
+//(มี category หรือ search)
+if ($cat || $q) {
+  $sql .= " ORDER BY product_createat DESC LIMIT 24";
   $stmt = $mysqli->prepare($sql);
-  if ($types !== '') {
-    $stmt->bind_param($types, ...$params);
-  }
+  if ($types) $stmt->bind_param($types, ...$params);
   $stmt->execute();
-  $resultFiltered = $stmt->get_result();
+  $result = $stmt->get_result();
   $stmt->close();
 } else {
-  // แสดงรายการ Popular
-  $stmtPop = $mysqli->prepare("SELECT product_id, product_name, product_path FROM product ORDER BY product_createat DESC ");
-  $stmtPop->execute();
-  $resultPop = $stmtPop->get_result();
-  $stmtPop->close();
-
-  // แสดงรายการ Random
-  $stmtRnd = $mysqli->prepare("SELECT product_id, product_name, product_path FROM product ORDER BY RAND() ");
-  $stmtRnd->execute();
-  $resultRnd = $stmtRnd->get_result();
-  $stmtRnd->close();
-}
-
-// เตรียม query string สำหรับลิงก์
-$carry = array();
-if ($cat !== '') {
-  $carry['cat'] = $cat;
-}
-if ($q !== '') {
-  $carry['q'] = $q;
+  $stmt1 = $mysqli->query("SELECT product_id, product_name, product_path FROM product ORDER BY product_createat DESC");
+  $stmt2 = $mysqli->query("SELECT product_id, product_name, product_path FROM product ORDER BY RAND()");
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pixora | Main</title>
+  <title>Pixora Main</title>
   <link rel="stylesheet" href="../css/StyleMain5.css">
 </head>
 
 <body>
   <header class="site-header">
     <div class="topnav">
-      <a href="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="brand" aria-label="Pixora Home">
+      <a href="<?= $_SERVER['PHP_SELF'] ?>" class="brand" aria-label="Pixora Home">
         <h1>Pixora</h1>
       </a>
 
       <div class="search-container">
-        <form class="search-box" method="get" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" role="search">
-          <?php if ($cat !== ''): ?>
-            <input type="hidden" name="cat" value="<?php echo htmlspecialchars($cat); ?>">
-          <?php endif; ?>
-          <input type="text" class="search-input" name="q" placeholder="Search images..." value="<?php echo htmlspecialchars($q); ?>">
+        <form class="search-box" method="get" action="<?= $_SERVER['PHP_SELF'] ?>" role="search">
+          <?php if ($cat): ?><input type="hidden" name="cat" value="<?= $cat ?>"><?php endif; ?>
+          <input type="text" class="search-input" name="q" placeholder="Search images..." value="<?= $q ?>">
           <button type="submit" class="search-btn">Search</button>
         </form>
       </div>
@@ -211,10 +93,10 @@ if ($q !== '') {
 
         <div class="profile-dropdown">
           <div class="icon-btn profile-toggle" title="Profile">
-            <img src="<?php echo $picSrc; ?>" alt="Profile" width="42" height="42"
-              style="border-radius:50%; object-fit:cover; border:2px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.12);"
-              onerror="this.src='<?php echo $defaultAvatar; ?>';">
+            <img src="<?= $picSrc ?>" alt="Profile" width="42" height="42"
+              style="border-radius:50%; object-fit:cover; border:2px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.12);">
           </div>
+
           <div class="dropdown-menu">
             <ul>
               <li>
@@ -243,44 +125,31 @@ if ($q !== '') {
   <main class="layout">
     <aside class="sidebar">
       <ul>
-        <?php
-        $base = array();
-        if ($q !== '') {
-          $base['q'] = $q;
-        }
-        ?>
-        <li><a href="<?php echo buildUrl($base); ?>" <?php echo activeAttr($cat, 'ALL'); ?>>All</a></li>
-        <li><a href="<?php echo buildUrl(array_merge($base, array('cat' => 'Art & Design'))); ?>" <?php echo activeAttr($cat, 'Art & Design'); ?>>Art & Design</a></li>
-        <li><a href="<?php echo buildUrl(array_merge($base, array('cat' => 'Health & Fitness'))); ?>" <?php echo activeAttr($cat, 'Health & Fitness'); ?>>Health & Fitness</a></li>
-        <li><a href="<?php echo buildUrl(array_merge($base, array('cat' => 'Technology & Business'))); ?>" <?php echo activeAttr($cat, 'Technology & Business'); ?>>Technology & Business</a></li>
-        <li><a href="<?php echo buildUrl(array_merge($base, array('cat' => 'Travel & Adventure'))); ?>" <?php echo activeAttr($cat, 'Travel & Adventure'); ?>>Travel & Adventure</a></li>
-        <li><a href="<?php echo buildUrl(array_merge($base, array('cat' => 'Food & Drink'))); ?>" <?php echo activeAttr($cat, 'Food & Drink'); ?>>Food & Drink</a></li>
+        <li><a href="?<?= $q ? 'q=' . urlencode($q) : '' ?>" <?= !$cat ? 'aria-current="page" class="active"' : '' ?>>All</a></li>
+        <li><a href="?cat=<?= urlencode('Art & Design') ?><?= $q ? '&q=' . urlencode($q) : '' ?>" <?= $cat == 'Art & Design' ? 'aria-current="page" class="active"' : '' ?>>Art & Design</a></li>
+        <li><a href="?cat=<?= urlencode('Health & Fitness') ?><?= $q ? '&q=' . urlencode($q) : '' ?>" <?= $cat == 'Health & Fitness' ? 'aria-current="page" class="active"' : '' ?>>Health & Fitness</a></li>
+        <li><a href="?cat=<?= urlencode('Technology & Business') ?><?= $q ? '&q=' . urlencode($q) : '' ?>" <?= $cat == 'Technology & Business' ? 'aria-current="page" class="active"' : '' ?>>Technology & Business</a></li>
+        <li><a href="?cat=<?= urlencode('Travel & Adventure') ?><?= $q ? '&q=' . urlencode($q) : '' ?>" <?= $cat == 'Travel & Adventure' ? 'aria-current="page" class="active"' : '' ?>>Travel & Adventure</a></li>
+        <li><a href="?cat=<?= urlencode('Food & Drink') ?><?= $q ? '&q=' . urlencode($q) : '' ?>" <?= $cat == 'Food & Drink' ? 'aria-current="page" class="active"' : '' ?>>Food & Drink</a></li>
       </ul>
     </aside>
 
     <div class="content">
-      <?php if (count($filters) > 0): ?>
-        <!-- แสดงผลการค้นหา -->
+      <?php if ($cat || $q): ?> 
         <section class="block">
           <h2>
             Results for
-            <?php if ($cat): echo htmlspecialchars($cat) . ' ';
+            <?php if ($cat): echo $cat . ' ';
             endif; ?>
-            <?php if ($q): echo '"' . htmlspecialchars($q) . '"';
+            <?php if ($q): echo '"' . $q . '"';
             endif; ?>
           </h2>
           <div class="card-grid">
-            <?php if ($resultFiltered && $resultFiltered->num_rows > 0): ?>
-              <?php while ($r = $resultFiltered->fetch_assoc()): ?>
-                <?php
-                $file = basename($r['product_path']);
-                $img = $productDirUrl . rawurlencode($file);
-                $linkParams = array_merge($carry, array('id' => $r['product_id']));
-                $link = 'product.php?' . http_build_query($linkParams);
-                ?>
-                <a class="card" href="<?php echo $link; ?>">
-                  <img src="<?php echo htmlspecialchars($img); ?>" alt="<?php echo htmlspecialchars($r['product_name']); ?>">
-                  <h3 class="card-title"><?php echo htmlspecialchars($r['product_name']); ?></h3>
+            <?php if ($result && $result->num_rows > 0): ?><!-- เช็คว่ามีผลลัพธ์หรือไม่ -->
+              <?php while ($r = $result->fetch_assoc()): ?> <!-- ดึงข้อมูลแถวถัดไป -->
+                <a class="card" href="product.php?id=<?= $r['product_id'] ?><?= $cat ? '&cat=' . urlencode($cat) : '' ?><?= $q ? '&q=' . urlencode($q) : '' ?>">
+                  <img src="<?= $prodUrl . basename($r['product_path']) ?>" alt="<?= $r['product_name'] ?>">
+                  <h3 class="card-title"><?= $r['product_name'] ?></h3>
                 </a>
               <?php endwhile; ?>
             <?php else: ?>
@@ -288,45 +157,33 @@ if ($q !== '') {
             <?php endif; ?>
           </div>
         </section>
+
       <?php else: ?>
-        <!-- แสดง Popular Today -->
         <section class="block">
           <h2>Popular Today</h2>
           <div class="card-grid">
-            <?php if ($resultPop && $resultPop->num_rows > 0): ?>
-              <?php while ($r = $resultPop->fetch_assoc()): ?>
-                <?php
-                $file = basename($r['product_path']);
-                $img = $productDirUrl . rawurlencode($file);
-                $linkParams = array_merge($carry, array('id' => $r['product_id']));
-                $link = 'product.php?' . http_build_query($linkParams);
-                ?>
-                <a class="card" href="<?php echo $link; ?>">
-                  <img src="<?php echo htmlspecialchars($img); ?>" alt="<?php echo htmlspecialchars($r['product_name']); ?>">
-                  <h3 class="card-title"><?php echo htmlspecialchars($r['product_name']); ?></h3>
+            <?php if ($stmt1 && $stmt1->num_rows > 0): ?>
+              <?php while ($r = $stmt1->fetch_assoc()): ?>
+                <a class="card" href="product.php?id=<?= $r['product_id'] ?>">
+                  <img src="<?= $prodUrl . basename($r['product_path']) ?>" alt="<?= $r['product_name'] ?>">
+                  <h3 class="card-title"><?= $r['product_name'] ?></h3>
                 </a>
               <?php endwhile; ?>
+              
             <?php else: ?>
               <p>No popular items yet.</p>
             <?php endif; ?>
           </div>
         </section>
 
-        <!-- แสดง Random Picture -->
         <section class="block">
           <h2>Random Picture</h2>
           <div class="card-grid">
-            <?php if ($resultRnd && $resultRnd->num_rows > 0): ?>
-              <?php while ($r = $resultRnd->fetch_assoc()): ?>
-                <?php
-                $file = basename($r['product_path']);
-                $img = $productDirUrl . rawurlencode($file);
-                $linkParams = array_merge($carry, array('id' => $r['product_id']));
-                $link = 'product.php?' . http_build_query($linkParams);
-                ?>
-                <a class="card" href="<?php echo $link; ?>">
-                  <img src="<?php echo htmlspecialchars($img); ?>" alt="<?php echo htmlspecialchars($r['product_name']); ?>">
-                  <h3 class="card-title"><?php echo htmlspecialchars($r['product_name']); ?></h3>
+            <?php if ($stmt2 && $stmt2->num_rows > 0): ?>
+              <?php while ($r = $stmt2->fetch_assoc()): ?>
+                <a class="card" href="product.php?id=<?= $r['product_id'] ?>">
+                  <img src="<?= $prodUrl . basename($r['product_path']) ?>" alt="<?= $r['product_name'] ?>">
+                  <h3 class="card-title"><?= $r['product_name'] ?></h3>
                 </a>
               <?php endwhile; ?>
             <?php else: ?>
